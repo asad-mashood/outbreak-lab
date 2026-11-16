@@ -1,0 +1,56 @@
+{
+  "_about": "Benchmark stress scenarios (SCENARIOS in js/mayor.js). Each one is a patch over the default settings.",
+  "scenarios": {
+    "epi": {
+      "name": "Epidemic",
+      "desc": "More first cases, easier spread, fewer hospital beds",
+      "patch": {
+        "initialInfected": 8,
+        "transmissionRate": 8,
+        "hospitalBeds": 6
+      }
+    },
+    "smog": {
+      "name": "Winter smog",
+      "desc": "Winter fog, 8 kilns burning all winter, heavy factory smoke",
+      "patch": {
+        "startSeason": "winter",
+        "kilns": 8,
+        "kilnWinterStop": false,
+        "fogChance": 60,
+        "factorySmoke": 130,
+        "airHarm": 80
+      }
+    },
+    "grid": {
+      "name": "Heat, storm and power cuts",
+      "desc": "Heatwave, a storm, a weak grid with frequent outages, high water use",
+      "patch": {
+        "baseTemp": 36,
+        "heatwave": true,
+        "gridOutageChance": 60,
+        "gridOutageHours": 5,
+        "electricityUsageMul": 130,
+        "gridCapacity": 360,
+        "weather": "storm",
+        "tankCapacity": 80,
+        "waterPerCapita": 130
+      }
+    },
+    "compound": {
+      "name": "Compound winter crisis",
+      "desc": "Epidemic, smog and power cuts together in winter",
+      "patch": {
+        "startSeason": "winter",
+        "kilns": 8,
+        "kilnWinterStop": false,
+        "fogChance": 50,
+        "initialInfected": 6,
+        "transmissionRate": 7,
+        "gridOutageChance": 35,
+        "hospitalBeds": 6,
+        "rainChance": 30
+      }
+    }
+  }
+}

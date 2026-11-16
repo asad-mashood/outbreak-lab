@@ -1,0 +1,120 @@
+{
+  "_about": "The ways of running the city that the benchmark compares (CONTROLLERS in js/mayor.js).",
+  "staticPack": {
+    "masks": 50,
+    "quarantine": true,
+    "speedLimit": 40,
+    "trafficPolice": 8,
+    "demandResponse": 15,
+    "streetlights": "adaptive",
+    "constructionAqiBan": true,
+    "dustControl": true,
+    "waterPerCapita": 90
+  },
+  "controllers": {
+    "none": {
+      "name": "No intervention"
+    },
+    "static": {
+      "name": "Fixed precaution pack (always on)",
+      "patch": {
+        "masks": 50,
+        "quarantine": true,
+        "speedLimit": 40,
+        "trafficPolice": 8,
+        "demandResponse": 15,
+        "streetlights": "adaptive",
+        "constructionAqiBan": true,
+        "dustControl": true,
+        "waterPerCapita": 90
+      }
+    },
+    "autopilot": {
+      "name": "City's built-in autopilot (smog alerts)",
+      "patch": {
+        "aiAutopilot": true
+      }
+    },
+    "mayor1": {
+      "name": "Mayor acting alone: alarms + plans every 30 min",
+      "mayor": {
+        "every": 30,
+        "triggers": true,
+        "strict": false
+      }
+    },
+    "mayor60": {
+      "name": "Mayor acting alone: plans hourly, no alarms",
+      "mayor": {
+        "every": 60,
+        "triggers": false,
+        "strict": false
+      }
+    },
+    "mayor360": {
+      "name": "Mayor acting alone: plans every 6 h, no alarms",
+      "mayor": {
+        "every": 360,
+        "triggers": false,
+        "strict": false
+      }
+    },
+    "consentAsk": {
+      "name": "Mayor with consent: you approve each lift one by one (a busy reviewer answers lifts after 24 h)",
+      "mayor": {
+        "every": 30,
+        "triggers": true,
+        "strict": true
+      },
+      "reviewer": {
+        "p": 1,
+        "wait": 60,
+        "every": 10,
+        "exit": "ask",
+        "liftWait": 1440
+      }
+    },
+    "consent": {
+      "name": "Mayor with consent: a reviewer approves every action after 1 h",
+      "mayor": {
+        "every": 30,
+        "triggers": true,
+        "strict": true
+      },
+      "reviewer": {
+        "p": 1,
+        "wait": 60,
+        "every": 10
+      }
+    },
+    "consentF": {
+      "name": "Mayor with consent + forecaster: reviewer follows the forecast",
+      "mayor": {
+        "every": 30,
+        "triggers": true,
+        "strict": true,
+        "forecast": true,
+        "forecastSync": true
+      },
+      "reviewer": {
+        "p": 1,
+        "wait": 60,
+        "every": 10,
+        "useForecast": true
+      }
+    },
+    "hitl": {
+      "name": "Mayor with consent: reviewer denies half",
+      "mayor": {
+        "every": 30,
+        "triggers": true,
+        "strict": true
+      },
+      "reviewer": {
+        "p": 0.5,
+        "wait": 120,
+        "every": 30
+      }
+    }
+  }
+}

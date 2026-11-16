@@ -1,0 +1,20 @@
+{
+  "name": "outbreak-lab",
+  "version": "17.0.0",
+  "description": "Agent-based smart-city simulator: epidemic, weather, air, roads, infrastructure, economy and a consent-based team of AI agents. Runs in the browser and headless in Node.",
+  "author": "Muhammad Asad Mashood",
+  "license": "MIT",
+  "homepage": "https://asad-mashood.github.io/outbreak-lab/",
+  "repository": { "type": "git", "url": "git+https://github.com/asad-mashood/outbreak-lab.git" },
+  "keywords": ["agent-based-model", "simulation", "epidemic", "smart-city", "digital-twin", "agentic-ai", "javascript", "canvas"],
+  "main": "js/mayor.js",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "build": "node tools/build.js",
+    "data": "node tools/export-data.js",
+    "bench": "node bench/bench.js data/results.json 5 3",
+    "paper": "node bench/make_paper.js data/results.json docs/paper-draft.md",
+    "check": "node --check js/model.js && node --check js/econ.js && node --check js/app.js && node --check js/mayor.js && node --check js/paper.js && node --check js/agent-ui.js && node --check js/gov-ui.js && node --check js/paperlab-ui.js"
+  },
+  "engines": { "node": ">=18" }
+}

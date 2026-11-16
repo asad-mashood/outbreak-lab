@@ -1,0 +1,1506 @@
+{
+  "_about": "Every measure the agent team can propose (ACTIONS in js/mayor.js). \"sets\" is what changes in the city when you approve it; \"burden\" is the cost to people (0-1); \"cool\" is the minimum minutes before it is suggested again. The expected-effect rule eff() of each action is a function and stays in the code.",
+  "count": 83,
+  "actions": [
+    {
+      "id": "masks50",
+      "label": "Ask people to wear masks (50%)",
+      "domain": "health",
+      "sets": {
+        "masks": 50
+      },
+      "burden": 0.03,
+      "cool": 30,
+      "relax": 0.04,
+      "hold": 720,
+      "kind": "masks",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "masks70",
+      "label": "Masks in public (70%)",
+      "domain": "health",
+      "sets": {
+        "masks": 70
+      },
+      "burden": 0.04,
+      "cool": 30,
+      "relax": 0.04,
+      "hold": 720,
+      "kind": "masks",
+      "creative": false,
+      "ladder": [
+        {
+          "masks": 50
+        }
+      ],
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "masks90",
+      "label": "Strict mask rule (90%)",
+      "domain": "health",
+      "sets": {
+        "masks": 90
+      },
+      "burden": 0.05,
+      "cool": 30,
+      "relax": 0.04,
+      "hold": 720,
+      "kind": "masks",
+      "creative": false,
+      "ladder": [
+        {
+          "masks": 70
+        },
+        {
+          "masks": 50
+        }
+      ],
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "quarantine",
+      "label": "Start test and isolate",
+      "domain": "health",
+      "sets": {
+        "quarantine": true
+      },
+      "burden": 0.05,
+      "cool": 30,
+      "relax": 0.03,
+      "hold": 720,
+      "kind": "testing",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "testing",
+      "label": "Test more people (detection 85%)",
+      "domain": "health",
+      "sets": {
+        "detectionRate": 85
+      },
+      "burden": 0.03,
+      "cool": 30,
+      "relax": 0.03,
+      "hold": 720,
+      "kind": "testing",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "sickhome",
+      "label": "Paid sick leave: sick people stay home (90%)",
+      "domain": "health",
+      "sets": {
+        "sickStayHome": 90
+      },
+      "burden": 0.04,
+      "cool": 30,
+      "relax": 0.03,
+      "hold": 720,
+      "kind": "behaviour",
+      "creative": false,
+      "sunset": 14,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "wfh20",
+      "label": "Work and study from home (20%)",
+      "domain": "health",
+      "sets": {
+        "distancing": 20
+      },
+      "burden": 0.07,
+      "cool": 30,
+      "relax": 0.05,
+      "hold": 720,
+      "kind": "distancing",
+      "creative": false,
+      "sunset": 10,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "wfh40",
+      "label": "Work and study from home (40%)",
+      "domain": "health",
+      "sets": {
+        "distancing": 40
+      },
+      "burden": 0.14,
+      "cool": 30,
+      "relax": 0.05,
+      "hold": 720,
+      "kind": "distancing",
+      "creative": false,
+      "ladder": [
+        {
+          "distancing": 20
+        }
+      ],
+      "sunset": 10,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "wfh60",
+      "label": "Work and study from home (60%)",
+      "domain": "health",
+      "sets": {
+        "distancing": 60
+      },
+      "burden": 0.21,
+      "cool": 30,
+      "relax": 0.05,
+      "hold": 720,
+      "kind": "distancing",
+      "big": true,
+      "creative": false,
+      "ladder": [
+        {
+          "distancing": 40
+        },
+        {
+          "distancing": 20
+        }
+      ],
+      "sunset": 10,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "schools",
+      "label": "Close schools and university",
+      "domain": "health",
+      "sets": {
+        "schoolsOpen": false
+      },
+      "burden": 0.25,
+      "cool": 120,
+      "relax": 0.05,
+      "hold": 1440,
+      "big": true,
+      "kind": "closure",
+      "creative": false,
+      "sunset": 7,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "gatherings",
+      "label": "Stop Friday prayers and weddings",
+      "domain": "health",
+      "sets": {
+        "gatheringsOpen": false
+      },
+      "burden": 0.1,
+      "cool": 120,
+      "relax": 0.06,
+      "hold": 1440,
+      "big": true,
+      "kind": "closure",
+      "creative": false,
+      "sunset": 7,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "market",
+      "label": "Close the market and bazaar",
+      "domain": "health",
+      "sets": {
+        "marketOpen": false
+      },
+      "burden": 0.2,
+      "cool": 120,
+      "relax": 0.06,
+      "hold": 1440,
+      "big": true,
+      "kind": "closure",
+      "creative": false,
+      "sunset": 7,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "gym",
+      "label": "Close gyms",
+      "domain": "health",
+      "sets": {
+        "gymOpen": false
+      },
+      "burden": 0.04,
+      "cool": 30,
+      "relax": 0.06,
+      "hold": 1440,
+      "kind": "closure",
+      "creative": false,
+      "sunset": 7,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "delivery",
+      "label": "Push grocery delivery (40% of trips)",
+      "domain": "health",
+      "sets": {
+        "groceryDelivery": 40
+      },
+      "burden": 0.02,
+      "cool": 30,
+      "relax": 0.05,
+      "hold": 720,
+      "kind": "behaviour",
+      "creative": false,
+      "sunset": 14,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "prayers",
+      "label": "Limit mosque attendance (10%)",
+      "domain": "health",
+      "sets": {
+        "prayerAttendance": 10
+      },
+      "burden": 0.05,
+      "cool": 30,
+      "relax": 0.05,
+      "hold": 720,
+      "kind": "behaviour",
+      "creative": false,
+      "sunset": 14,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "beds4",
+      "label": "Open 4 more hospital beds",
+      "domain": "health",
+      "sets": {
+        "hospitalBeds": 12
+      },
+      "burden": 0.016,
+      "cool": 60,
+      "kind": "capacity",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "beds10",
+      "label": "Open 10 more hospital beds (field hospital)",
+      "domain": "health",
+      "sets": {
+        "hospitalBeds": 18
+      },
+      "burden": 0.04,
+      "cool": 60,
+      "kind": "capacity",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "amb",
+      "label": "Add 2 ambulances",
+      "domain": "health",
+      "sets": {
+        "ambulances": 5
+      },
+      "burden": 0.02,
+      "cool": 60,
+      "kind": "capacity",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "alert",
+      "label": "Send an emergency smog alert to every phone",
+      "domain": "air",
+      "sets": null,
+      "burden": 0.01,
+      "cool": 360,
+      "oneShot": true,
+      "kind": "alert",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "media",
+      "label": "Run a public-awareness campaign (alerts followed by 85%)",
+      "domain": "air",
+      "sets": {
+        "mediaReach": 90,
+        "alertCompliance": 85
+      },
+      "burden": 0.01,
+      "cool": 30,
+      "kind": "alert",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "inspect",
+      "label": "Send inspectors to the kilns the satellite flagged",
+      "domain": "air",
+      "sets": null,
+      "burden": 0.03,
+      "cool": 120,
+      "oneShot": true,
+      "kind": "kilns",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "autoinspect",
+      "label": "Dispatch inspectors automatically from now on",
+      "domain": "air",
+      "sets": {
+        "autoDispatch": true
+      },
+      "burden": 0.03,
+      "cool": 30,
+      "kind": "kilns",
+      "creative": false,
+      "sunset": 21,
+      "standing": true,
+      "hard": ""
+    },
+    {
+      "id": "cleankilns",
+      "label": "Order kilns to switch to clean zigzag technology",
+      "domain": "air",
+      "sets": {
+        "cleanKilns": true
+      },
+      "burden": 0.08,
+      "cool": 240,
+      "big": true,
+      "kind": "kilns",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": "switching kilns to zigzag is a costly, slow change for kiln owners"
+    },
+    {
+      "id": "aqiban",
+      "label": "Pause construction while the air is bad",
+      "domain": "air",
+      "sets": {
+        "constructionAqiBan": true
+      },
+      "burden": 0.03,
+      "cool": 30,
+      "relax": 0.15,
+      "hold": 240,
+      "kind": "construction",
+      "creative": false,
+      "sunset": 21,
+      "standing": true,
+      "hard": ""
+    },
+    {
+      "id": "dust",
+      "label": "Water spray and covers at the construction site",
+      "domain": "air",
+      "sets": {
+        "dustControl": true
+      },
+      "burden": 0.01,
+      "cool": 30,
+      "relax": 0.12,
+      "hold": 240,
+      "kind": "construction",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "factory",
+      "label": "Cut factory smoke by 40% (filters, shorter shifts)",
+      "domain": "air",
+      "sets": {
+        "factorySmoke": 60
+      },
+      "burden": 0.09,
+      "cool": 30,
+      "relax": 0.15,
+      "hold": 480,
+      "kind": "industry",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "vehicles",
+      "label": "Check exhausts and ban smoky vehicles (-30% traffic smoke)",
+      "domain": "air",
+      "sets": {
+        "trafficSmoke": 70
+      },
+      "burden": 0.03,
+      "cool": 30,
+      "relax": 0.15,
+      "hold": 480,
+      "kind": "traffic",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "buses",
+      "label": "Double the bus service to get cars off the road",
+      "domain": "air",
+      "sets": {
+        "busesPerHour": 4
+      },
+      "burden": 0.015,
+      "cool": 240,
+      "kind": "traffic",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "burning",
+      "label": "Ban open waste burning",
+      "domain": "air",
+      "sets": {
+        "wasteBurning": 0
+      },
+      "burden": 0.01,
+      "cool": 30,
+      "kind": "waste",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "smogschools",
+      "label": "Close schools on smog days",
+      "domain": "air",
+      "sets": {
+        "smogSchoolClose": true
+      },
+      "burden": 0.05,
+      "cool": 30,
+      "kind": "closure",
+      "creative": false,
+      "sunset": 7,
+      "standing": true,
+      "hard": ""
+    },
+    {
+      "id": "slow40",
+      "label": "Lower the speed limit to 40 km/h",
+      "domain": "roads",
+      "sets": {
+        "speedLimit": 40
+      },
+      "burden": 0.02,
+      "cool": 30,
+      "relax": 0.15,
+      "hold": 360,
+      "kind": "speed",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "slow30",
+      "label": "Lower the speed limit to 30 km/h",
+      "domain": "roads",
+      "sets": {
+        "speedLimit": 30
+      },
+      "burden": 0.03,
+      "cool": 30,
+      "relax": 0.15,
+      "hold": 360,
+      "kind": "speed",
+      "creative": false,
+      "ladder": [
+        {
+          "speedLimit": 40
+        }
+      ],
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "police8",
+      "label": "Put more traffic police on the junctions (8)",
+      "domain": "roads",
+      "sets": {
+        "trafficPolice": 8
+      },
+      "burden": 0.016,
+      "cool": 30,
+      "relax": 0.1,
+      "hold": 360,
+      "kind": "police",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "police12",
+      "label": "Maximum traffic police (12)",
+      "domain": "roads",
+      "sets": {
+        "trafficPolice": 12
+      },
+      "burden": 0.032,
+      "cool": 30,
+      "relax": 0.1,
+      "hold": 360,
+      "kind": "police",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "cameras",
+      "label": "Add speed cameras (8 junctions)",
+      "domain": "roads",
+      "sets": {
+        "challanCameras": 8
+      },
+      "burden": 0.01,
+      "cool": 30,
+      "kind": "police",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "belts",
+      "label": "Seat-belt campaign (90% of drivers)",
+      "domain": "roads",
+      "sets": {
+        "seatbelts": 90
+      },
+      "burden": 0.005,
+      "cool": 30,
+      "kind": "behaviour",
+      "creative": false,
+      "sunset": 14,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "ploughs",
+      "label": "Send snow ploughs",
+      "domain": "roads",
+      "sets": {
+        "snowPloughs": true
+      },
+      "burden": 0.01,
+      "cool": 30,
+      "kind": "snow",
+      "creative": false,
+      "sunset": 21,
+      "standing": true,
+      "hard": ""
+    },
+    {
+      "id": "motorway",
+      "label": "Close the motorway in fog",
+      "domain": "roads",
+      "sets": {
+        "motorwayFogClose": true
+      },
+      "burden": 0.02,
+      "cool": 30,
+      "kind": "fog",
+      "creative": false,
+      "sunset": 21,
+      "standing": true,
+      "hard": ""
+    },
+    {
+      "id": "dr15",
+      "label": "Ask households to cut evening-peak use (15%)",
+      "domain": "power",
+      "sets": {
+        "demandResponse": 15
+      },
+      "burden": 0.03,
+      "cool": 30,
+      "relax": 0.05,
+      "hold": 480,
+      "kind": "demand",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "dr30",
+      "label": "Ask households to cut evening-peak use (30%)",
+      "domain": "power",
+      "sets": {
+        "demandResponse": 30
+      },
+      "burden": 0.06,
+      "cool": 30,
+      "relax": 0.05,
+      "hold": 480,
+      "kind": "demand",
+      "creative": false,
+      "ladder": [
+        {
+          "demandResponse": 15
+        }
+      ],
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "dr45",
+      "label": "Strong demand response (45% cut at the peak)",
+      "domain": "power",
+      "sets": {
+        "demandResponse": 45
+      },
+      "burden": 0.09,
+      "cool": 30,
+      "relax": 0.05,
+      "hold": 480,
+      "kind": "demand",
+      "creative": false,
+      "ladder": [
+        {
+          "demandResponse": 30
+        },
+        {
+          "demandResponse": 15
+        }
+      ],
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "lights",
+      "label": "Dim street lights when streets are empty",
+      "domain": "power",
+      "sets": {
+        "streetlights": "adaptive"
+      },
+      "burden": 0.02,
+      "cool": 30,
+      "relax": 0.05,
+      "hold": 480,
+      "kind": "lights",
+      "creative": false,
+      "sunset": 21,
+      "standing": true,
+      "hard": ""
+    },
+    {
+      "id": "gens",
+      "label": "Rent emergency generators (+15% grid capacity)",
+      "domain": "power",
+      "sets": {
+        "gridCapacity": 485
+      },
+      "burden": 0.023214285714285715,
+      "cool": 120,
+      "kind": "supply",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "hospgen",
+      "label": "Make sure the hospital generator is on",
+      "domain": "power",
+      "sets": {
+        "hospitalGenerator": true
+      },
+      "burden": 0.01,
+      "cool": 30,
+      "kind": "supply",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "water90",
+      "label": "Water-saving campaign (90% use)",
+      "domain": "water",
+      "sets": {
+        "waterPerCapita": 90
+      },
+      "burden": 0.015,
+      "cool": 30,
+      "relax": 0.05,
+      "hold": 480,
+      "kind": "water",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "water80",
+      "label": "Strong water saving (80% use)",
+      "domain": "water",
+      "sets": {
+        "waterPerCapita": 80
+      },
+      "burden": 0.03,
+      "cool": 30,
+      "relax": 0.05,
+      "hold": 480,
+      "kind": "water",
+      "creative": false,
+      "ladder": [
+        {
+          "waterPerCapita": 90
+        }
+      ],
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "water65",
+      "label": "Water rationing (65% use)",
+      "domain": "water",
+      "sets": {
+        "waterPerCapita": 65
+      },
+      "burden": 0.05,
+      "cool": 30,
+      "relax": 0.05,
+      "hold": 480,
+      "kind": "water",
+      "creative": false,
+      "ladder": [
+        {
+          "waterPerCapita": 80
+        }
+      ],
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "leaks",
+      "label": "Repair crews fix pipe leaks (leakage 5%)",
+      "domain": "water",
+      "sets": {
+        "leakRate": 5
+      },
+      "burden": 0.02,
+      "cool": 240,
+      "kind": "supply",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "wifi",
+      "label": "Switch on every Wi-Fi access point",
+      "domain": "net",
+      "sets": {
+        "wifiAps": 10
+      },
+      "burden": 0.01,
+      "cool": 30,
+      "kind": "net",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "vax1",
+      "label": "Vaccination drive: 1% of the city a day, highest risk first",
+      "domain": "health",
+      "sets": {
+        "vaxDrive": 1
+      },
+      "burden": 0.01,
+      "cool": 240,
+      "relax": 0.04,
+      "hold": 1440,
+      "kind": "vaccine",
+      "creative": true,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "vax3",
+      "label": "Big vaccination drive: 3% of the city a day",
+      "domain": "health",
+      "sets": {
+        "vaxDrive": 3
+      },
+      "burden": 0.015,
+      "cool": 240,
+      "relax": 0.04,
+      "hold": 1440,
+      "kind": "vaccine",
+      "creative": true,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "purif20",
+      "label": "Subsidised air purifiers for the 20% most vulnerable homes (elders, asthma, children)",
+      "domain": "air",
+      "sets": {
+        "purifiers": 20
+      },
+      "burden": 0.004,
+      "cool": 240,
+      "sunk": true,
+      "kind": "filters",
+      "creative": true,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "purif50",
+      "label": "Air purifiers for half of all homes",
+      "domain": "air",
+      "sets": {
+        "purifiers": 50
+      },
+      "burden": 0.006,
+      "cool": 240,
+      "sunk": true,
+      "kind": "filters",
+      "creative": true,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "bldgfilt",
+      "label": "Air filters in schools, the hospital and offices",
+      "domain": "air",
+      "sets": {
+        "bldgFilters": true
+      },
+      "burden": 0.004,
+      "cool": 240,
+      "sunk": true,
+      "kind": "filters",
+      "creative": true,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "spray",
+      "label": "Anti-smog water-mist guns (4) on dry, smoggy days",
+      "domain": "air",
+      "sets": {
+        "sprayGuns": 4
+      },
+      "burden": 0.006,
+      "cool": 240,
+      "sunk": true,
+      "kind": "spray",
+      "creative": true,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "seed_air",
+      "label": "Cloud seeding flights to bring rain and wash the air",
+      "domain": "air",
+      "sets": {
+        "cloudSeeding": true
+      },
+      "burden": 0.005,
+      "cool": 30,
+      "relax": 0.1,
+      "hold": 1440,
+      "kind": "weather",
+      "creative": true,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "oddeven",
+      "label": "Odd-even rule: half the cars stay home each day",
+      "domain": "air",
+      "sets": {
+        "oddEven": true
+      },
+      "burden": 0.04,
+      "cool": 30,
+      "relax": 0.15,
+      "hold": 480,
+      "kind": "carfree",
+      "ladder": [],
+      "creative": true,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "freebus",
+      "label": "Free bus rides, so people leave the car at home",
+      "domain": "air",
+      "sets": {
+        "busFare": 0
+      },
+      "burden": 0.005,
+      "cool": 30,
+      "relax": 0.15,
+      "hold": 480,
+      "kind": "transit",
+      "ladder": [
+        {
+          "busFare": 30
+        }
+      ],
+      "creative": true,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "seed_water",
+      "label": "Cloud seeding flights to bring rain for the water tank",
+      "domain": "water",
+      "sets": {
+        "cloudSeeding": true
+      },
+      "burden": 0.005,
+      "cool": 30,
+      "relax": 0.05,
+      "hold": 1440,
+      "kind": "weather",
+      "creative": true,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "tankers",
+      "label": "Hire 3 water tankers",
+      "domain": "water",
+      "sets": {
+        "tankers": 3
+      },
+      "burden": 0.005,
+      "cool": 120,
+      "relax": 0.05,
+      "hold": 480,
+      "kind": "tankers",
+      "creative": true,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "solar",
+      "label": "Build 100 kW more solar",
+      "domain": "power",
+      "sets": {
+        "solarKw": 220
+      },
+      "burden": 0.01,
+      "cool": 480,
+      "sunk": true,
+      "kind": "supply",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "battery",
+      "label": "Add 400 kWh of grid battery",
+      "domain": "power",
+      "sets": {
+        "batteryKwh": 800
+      },
+      "burden": 0.01,
+      "cool": 480,
+      "sunk": true,
+      "kind": "storage",
+      "creative": true,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "cash_s",
+      "label": "Cash relief: Rs 300 a day to the poorest 40% of households",
+      "domain": "welfare",
+      "sets": {
+        "cashTransfer": 300,
+        "transferShare": 40
+      },
+      "burden": 0.01,
+      "cool": 30,
+      "relax": 0.08,
+      "hold": 1440,
+      "kind": "cash",
+      "ladder": [
+        {
+          "cashTransfer": 150
+        }
+      ],
+      "creative": true,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "cash_l",
+      "label": "Cash relief: Rs 700 a day to the poorest 60%",
+      "domain": "welfare",
+      "sets": {
+        "cashTransfer": 700,
+        "transferShare": 60
+      },
+      "burden": 0.02,
+      "cool": 30,
+      "relax": 0.08,
+      "hold": 1440,
+      "kind": "cash",
+      "ladder": [
+        {
+          "cashTransfer": 350
+        },
+        {
+          "cashTransfer": 150
+        }
+      ],
+      "creative": true,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "foodsub",
+      "label": "Food subsidy: 20% off the basket",
+      "domain": "welfare",
+      "sets": {
+        "foodSubsidy": 20
+      },
+      "burden": 0.01,
+      "cool": 30,
+      "relax": 0.08,
+      "hold": 1440,
+      "kind": "subsidy",
+      "ladder": [
+        {
+          "foodSubsidy": 10
+        }
+      ],
+      "creative": true,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "wagesup",
+      "label": "Wage support: the city pays half of lost wages",
+      "domain": "welfare",
+      "sets": {
+        "wageSupport": 50
+      },
+      "burden": 0.01,
+      "cool": 30,
+      "relax": 0.08,
+      "hold": 1440,
+      "kind": "wages",
+      "ladder": [
+        {
+          "wageSupport": 25
+        }
+      ],
+      "creative": true,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "rooms",
+      "label": "Birth centre: 2 more delivery rooms",
+      "domain": "maternal",
+      "sets": {
+        "birthRooms": 5
+      },
+      "burden": 0.01,
+      "cool": 360,
+      "sunk": true,
+      "kind": "rooms",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "midwives",
+      "label": "Birth centre: 4 more midwives",
+      "domain": "maternal",
+      "sets": {
+        "midwives": 8
+      },
+      "burden": 0.01,
+      "cool": 360,
+      "kind": "midwives",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "incub",
+      "label": "Birth centre: 2 more incubators for early babies",
+      "domain": "maternal",
+      "sets": {
+        "incubators": 4
+      },
+      "burden": 0.01,
+      "cool": 360,
+      "sunk": true,
+      "kind": "incubators",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "antenatal",
+      "label": "Antenatal care drive: 75% of mothers",
+      "domain": "maternal",
+      "sets": {
+        "antenatal": 75
+      },
+      "burden": 0.01,
+      "cool": 720,
+      "kind": "care",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "hospgen_m",
+      "label": "Make sure the birth centre has backup power",
+      "domain": "maternal",
+      "sets": {
+        "hospitalGenerator": true
+      },
+      "burden": 0.005,
+      "cool": 30,
+      "kind": "supply",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "fund_reserve",
+      "label": "Use the emergency fund (up to 10 days of spending)",
+      "domain": "budget",
+      "sets": null,
+      "burden": 0.003,
+      "cool": 720,
+      "oneShot": true,
+      "fund": true,
+      "kind": "fund",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "fund_grant",
+      "label": "Ask the province for a grant (10 days of spending; may be part or none)",
+      "domain": "budget",
+      "sets": null,
+      "burden": 0.003,
+      "cool": 4320,
+      "oneShot": true,
+      "fund": true,
+      "kind": "fund",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "fund_borrow",
+      "label": "Borrow from the bank (up to 12 days of spending)",
+      "domain": "budget",
+      "sets": null,
+      "burden": 0.02,
+      "cool": 1440,
+      "oneShot": true,
+      "fund": true,
+      "big": true,
+      "kind": "fund",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "fund_levy",
+      "label": "Emergency levy: property tax +30% for a while (a small yield)",
+      "domain": "budget",
+      "sets": {
+        "taxRate": 130
+      },
+      "burden": 0.1,
+      "cool": 30,
+      "big": true,
+      "relax": 0.06,
+      "hold": 2880,
+      "kind": "levy",
+      "ladder": [
+        {
+          "taxRate": 115
+        }
+      ],
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "fund_freeze",
+      "label": "Freeze non-urgent spending",
+      "domain": "budget",
+      "sets": {
+        "spendingFreeze": true
+      },
+      "burden": 0.03,
+      "cool": 30,
+      "relax": 0.06,
+      "hold": 1440,
+      "kind": "freeze",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "fund_realloc",
+      "label": "Move 20% of the education (or transport) budget to the department that is short",
+      "domain": "budget",
+      "sets": null,
+      "burden": 0.004,
+      "cool": 1440,
+      "oneShot": true,
+      "fund": true,
+      "kind": "fund",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "fund_repay",
+      "label": "Good times: repay debt and refill the emergency fund",
+      "domain": "budget",
+      "sets": null,
+      "burden": 0.001,
+      "cool": 2880,
+      "oneShot": true,
+      "fund": true,
+      "kind": "fund",
+      "creative": false,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "pk_smog",
+      "label": "Package: clean-air push (home purifiers, building filters, water-mist guns, free buses, odd-even, cloud seeding)",
+      "domain": "air",
+      "sets": {
+        "purifiers": 20,
+        "bldgFilters": true,
+        "sprayGuns": 4,
+        "busFare": 0,
+        "oddEven": true,
+        "cloudSeeding": true
+      },
+      "burden": 0.057600000000000005,
+      "cool": 360,
+      "pkg": true,
+      "parts": [
+        "purif20",
+        "bldgfilt",
+        "spray",
+        "freebus",
+        "oddeven",
+        "seed_air"
+      ],
+      "big": true,
+      "kind": "package",
+      "creative": true,
+      "relax": 0.12,
+      "hold": 1440,
+      "sunset": 7,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "pk_epi",
+      "label": "Package: protect and support (masks, test-and-isolate, vaccination drive, wage support)",
+      "domain": "health",
+      "sets": {
+        "masks": 70,
+        "quarantine": true,
+        "vaxDrive": 1,
+        "wageSupport": 50
+      },
+      "burden": 0.09899999999999999,
+      "cool": 360,
+      "pkg": true,
+      "parts": [
+        "masks70",
+        "quarantine",
+        "vax1",
+        "wagesup"
+      ],
+      "big": true,
+      "kind": "package",
+      "creative": true,
+      "relax": 0.05,
+      "hold": 1440,
+      "sunset": 14,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "pk_hard",
+      "label": "Package: hardship support (cash relief, cheaper food, wage support)",
+      "domain": "welfare",
+      "sets": {
+        "cashTransfer": 300,
+        "transferShare": 40,
+        "foodSubsidy": 20,
+        "wageSupport": 50
+      },
+      "burden": 0.027,
+      "cool": 360,
+      "pkg": true,
+      "parts": [
+        "cash_s",
+        "foodsub",
+        "wagesup"
+      ],
+      "big": true,
+      "kind": "package",
+      "creative": true,
+      "relax": 0.08,
+      "hold": 1440,
+      "sunset": 14,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "pk_mother",
+      "label": "Package: safe births (rooms, midwives, incubators, antenatal care)",
+      "domain": "maternal",
+      "sets": {
+        "birthRooms": 5,
+        "midwives": 8,
+        "incubators": 4,
+        "antenatal": 75
+      },
+      "burden": 0.036000000000000004,
+      "cool": 360,
+      "pkg": true,
+      "parts": [
+        "rooms",
+        "midwives",
+        "incub",
+        "antenatal"
+      ],
+      "big": false,
+      "kind": "package",
+      "creative": true,
+      "relax": null,
+      "sunset": 21,
+      "standing": false,
+      "hard": ""
+    },
+    {
+      "id": "pk_water",
+      "label": "Package: water relief (tankers, cloud seeding, saving campaign)",
+      "domain": "water",
+      "sets": {
+        "tankers": 3,
+        "cloudSeeding": true,
+        "waterPerCapita": 80
+      },
+      "burden": 0.036000000000000004,
+      "cool": 360,
+      "pkg": true,
+      "parts": [
+        "tankers",
+        "seed_water",
+        "water80"
+      ],
+      "big": true,
+      "kind": "package",
+      "creative": true,
+      "relax": 0.05,
+      "hold": 1440,
+      "sunset": 7,
+      "standing": false,
+      "hard": ""
+    }
+  ]
+}

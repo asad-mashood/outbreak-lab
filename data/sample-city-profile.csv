@@ -1,0 +1,13 @@
+parameter,value
+population,450000
+hospital_beds_per_1000,1.2
+kilns,6
+zigzag_share_pct,15
+avg_temp_c,24
+rainy_days_pct,25
+foggy_mornings_pct,35
+smokers_pct,22
+flights_per_day,4
+buses_per_hour,3
+speed_limit_kmh,50
+avg_aqi,190

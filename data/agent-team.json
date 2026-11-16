@@ -1,0 +1,154 @@
+{
+  "_about": "Configuration of the agent team (js/mayor.js): problem areas, goals, officers and timings.",
+  "domains": [
+    "health",
+    "air",
+    "roads",
+    "power",
+    "water",
+    "net",
+    "budget",
+    "welfare",
+    "maternal"
+  ],
+  "labels": {
+    "health": "Health",
+    "air": "Air quality",
+    "roads": "Road safety",
+    "power": "Power",
+    "water": "Water",
+    "net": "Connectivity",
+    "budget": "City budget",
+    "welfare": "Household hardship",
+    "maternal": "Mothers and newborns"
+  },
+  "goals": {
+    "balanced": {
+      "health": 1.5,
+      "air": 1.2,
+      "roads": 1,
+      "power": 1,
+      "water": 1,
+      "net": 0.4,
+      "budget": 0.9,
+      "welfare": 1,
+      "maternal": 0.9
+    },
+    "lives": {
+      "health": 3,
+      "air": 1,
+      "roads": 1.2,
+      "power": 0.5,
+      "water": 0.5,
+      "net": 0.2,
+      "budget": 0.4,
+      "welfare": 0.7,
+      "maternal": 1.5
+    },
+    "air": {
+      "health": 1,
+      "air": 3,
+      "roads": 0.5,
+      "power": 0.5,
+      "water": 0.3,
+      "net": 0.1,
+      "budget": 0.4,
+      "welfare": 0.5,
+      "maternal": 0.5
+    },
+    "infra": {
+      "health": 0.8,
+      "air": 0.6,
+      "roads": 1.5,
+      "power": 2.2,
+      "water": 2.2,
+      "net": 0.8,
+      "budget": 1.2,
+      "welfare": 0.7,
+      "maternal": 0.5
+    }
+  },
+  "burdenWeightMU": 0.4,
+  "tiers": [
+    "none",
+    "low",
+    "normal",
+    "high",
+    "emergency"
+  ],
+  "officers": [
+    {
+      "id": "health",
+      "name": "Health officer",
+      "domains": [
+        "health"
+      ]
+    },
+    {
+      "id": "air",
+      "name": "Air-quality officer",
+      "domains": [
+        "air"
+      ]
+    },
+    {
+      "id": "traffic",
+      "name": "Traffic officer",
+      "domains": [
+        "roads"
+      ]
+    },
+    {
+      "id": "utilities",
+      "name": "Utilities officer",
+      "domains": [
+        "power",
+        "water",
+        "net"
+      ]
+    },
+    {
+      "id": "finance",
+      "name": "Finance officer",
+      "domains": [
+        "budget"
+      ]
+    },
+    {
+      "id": "welfare",
+      "name": "Welfare officer",
+      "domains": [
+        "welfare"
+      ]
+    },
+    {
+      "id": "maternal",
+      "name": "Birth-centre officer",
+      "domains": [
+        "maternal"
+      ]
+    }
+  ],
+  "departmentOf": {
+    "health": "health",
+    "air": "environment",
+    "roads": "safety",
+    "power": "utilities",
+    "water": "utilities",
+    "net": "utilities",
+    "budget": "admin",
+    "welfare": "welfare",
+    "maternal": "health"
+  },
+  "forecastHorizonMinutes": {
+    "health": 1440,
+    "air": 720,
+    "roads": 720,
+    "power": 360,
+    "water": 720,
+    "net": 180,
+    "budget": 1440,
+    "welfare": 1440,
+    "maternal": 1440
+  }
+}

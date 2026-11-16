@@ -1,0 +1,1478 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Outbreak Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+        <circle cx="20" cy="20" r="18" fill="none" stroke="#46c6e6" stroke-width="1.6" opacity=".9"/>
+        <circle cx="20" cy="20" r="11.5" fill="none" stroke="#46c6e6" stroke-width="1" opacity=".45"/>
+        <path d="M20 2v6M20 32v6M2 20h6M32 20h6" stroke="#46c6e6" stroke-width="1.4" opacity=".7"/>
+        <path d="M20 20 L33 11" stroke="#46c6e6" stroke-width="1.4" opacity=".9"/>
+        <circle cx="13" cy="15" r="2.2" fill="#9fb3c8"/>
+        <circle cx="26" cy="25" r="2.2" fill="#2ee6a1"/>
+        <circle cx="20" cy="20" r="3" fill="#ff4d4f"/>
+        <circle cx="20" cy="20" r="6" fill="none" stroke="#ff4d4f" stroke-width="1" stroke-dasharray="2 2"/>
+        <circle cx="27" cy="14" r="2.2" fill="#ffb83d"/>
+        <circle cx="13" cy="26" r="2.2" fill="#b197fc"/>
+      </svg>
+      <div>
+        <div class="brand-name">Outbreak Lab</div>
+        <div class="brand-sub">Agent-based city simulator · epidemic, weather, air, roads · real-time</div>
+      </div>
+    </div>
+    <div class="threat" id="threat" data-level="1" role="status" aria-live="polite">
+      <span class="threat-dot"></span>
+      <span class="threat-label" id="threatLabel">Standby</span>
+      <span class="threat-text" id="threatText">Choose a scenario and press Start</span>
+    </div>
+    <div class="top-actions">
+      <button class="top-btn" id="nightBtn" type="button" aria-pressed="true" title="Map lighting: Night, Day or Auto (follows the clock). Shortcut N">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" id="nightIco"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><span id="nightLabel">Night</span>
+      </button>
+      <button class="top-btn" id="sfxBtn" type="button" aria-pressed="true" title="Sound effects on or off (M)">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" id="sfxIco"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg><span id="sfxLabel">Sound on</span>
+      </button>
+      <button class="top-btn" id="fsBtn" type="button" title="Full screen (F)">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span>Full screen</span>
+      </button>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Sections">
+      <button role="tab" id="tabbtn-sim" aria-selected="true" aria-controls="tab-sim" data-tab="sim">Simulation</button>
+      <button role="tab" id="tabbtn-twin" aria-selected="false" aria-controls="tab-twin" data-tab="twin">Smart city</button>
+      <button role="tab" id="tabbtn-agent" aria-selected="false" aria-controls="tab-agent" data-tab="agent">AI Agent</button>
+      <button role="tab" id="tabbtn-gov" aria-selected="false" aria-controls="tab-gov" data-tab="gov">Government</button>
+      <button role="tab" id="tabbtn-paper" aria-selected="false" aria-controls="tab-paper" data-tab="paper">Paper Lab</button>
+      <button role="tab" id="tabbtn-research" aria-selected="false" aria-controls="tab-research" data-tab="research">Research</button>
+      <button role="tab" id="tabbtn-how" aria-selected="false" aria-controls="tab-how" data-tab="how">How it works</button>
+      <button role="tab" id="tabbtn-guide" aria-selected="false" aria-controls="tab-guide" data-tab="guide">Class guide</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section id="tab-sim" role="tabpanel" aria-labelledby="tabbtn-sim">
+  <div class="ops">
+    <!-- ================= LEFT RAIL ================= -->
+    <aside class="col-left" aria-label="Controls">
+      <div class="card" id="cardCmd">
+        <div class="card-head"><h2 class="card-title"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>Command</h2></div>
+        <div class="card-body">
+          <div class="transport">
+            <button class="tbtn go" id="playBtn" type="button" title="Start or pause (Space)"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M4 2.5v11l9-5.5z"/></svg><span>Start</span></button>
+            <button class="tbtn step" id="stepBtn" type="button" title="Advance one hour (→)"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M3 3v10l7-5zM11 3h2v10h-2z"/></svg><span>+1 hour</span></button>
+            <button class="tbtn day" id="dayBtn" type="button" title="Advance one day (D)"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M1.5 3v10l6-5zM8.5 3v10l6-5z"/></svg><span>+1 day</span></button>
+            <button class="tbtn stop" id="resetBtn" type="button" title="Restart with current settings (R)"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2.5a5.5 5.5 0 1 1-5.2 3.7"/><path d="M2.2 2.2v4.3h4.3"/></svg><span>Reset</span><span class="pending-dot" id="resetDot" hidden></span></button>
+          </div>
+          <div class="speed-row"><span class="eyebrow">Simulation speed</span><span class="val" id="speedVal">1 day ≈ 1.6 s</span></div>
+          <div class="seg mono" id="speedSeg" role="group" aria-label="Simulation speed">
+            <button type="button" data-speed="0.25" aria-pressed="false" title="Slow motion: watch traffic lights, cars and people">×¼</button>
+            <button type="button" data-speed="1" aria-pressed="false" title="1 minute per frame: watch people walk">×1</button>
+            <button type="button" data-speed="5" aria-pressed="false">×5</button>
+            <button type="button" data-speed="15" aria-pressed="true">×15</button>
+            <button type="button" data-speed="30" aria-pressed="false">×30</button>
+            <button type="button" data-speed="60" aria-pressed="false">×60</button>
+            <button type="button" data-speed="120" aria-pressed="false">×120</button>
+          </div>
+          <div class="clock-row">
+            <span class="eyebrow">Day</span><span id="dayNum">0</span><span id="hourNum">Mon 06:00</span>
+            <span class="phase" id="phase" data-phase="ready">Ready</span>
+          </div>
+          <div class="hint cmd-hint">
+            <span><span class="kbd">Space</span> start/pause</span>
+            <span><span class="kbd">→</span> hour</span>
+            <span><span class="kbd">D</span> day</span>
+            <span><span class="kbd">R</span> reset</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="cardScen">
+        <div class="card-head"><h2 class="card-title"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/></svg>Scenarios</h2></div>
+        <div class="card-body">
+          <div class="scenario-grid" id="scenarioGrid"></div>
+          <div class="scenario-status" id="scenarioStatus"></div>
+        </div>
+      </div>
+
+      <div class="card" id="cardParams">
+        <div class="card-head"><h2 class="card-title"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>Parameters</h2></div>
+        <div class="card-body" id="params"></div>
+      </div>
+    </aside>
+
+    <!-- ================= CENTRE ================= -->
+    <section class="col-main" aria-label="Simulation">
+      <div class="card map-card" id="cardMap">
+        <div class="map-toolbar">
+          <div class="seg" id="toolSeg" role="group" aria-label="Click tool">
+            <button type="button" data-tool="inspect" aria-pressed="true" title="Click a person to see their details (1)">Inspect</button>
+            <button type="button" data-tool="infect" aria-pressed="false" title="Click a person to infect them (2)">Infect</button>
+            <button type="button" data-tool="vaccinate" aria-pressed="false" title="Click a person to vaccinate them (3)">Vaccinate</button>
+            <button type="button" data-tool="inject" aria-pressed="false" title="Click a place to cause the incident chosen in the Smart city tab (fire, crash, burst, fault...)">Incident</button>
+          </div>
+          <div class="layer-chips" role="group" aria-label="Map layers">
+            <button type="button" class="lchip" data-layer="links" aria-pressed="true">Infection links</button>
+            <button type="button" class="lchip" data-layer="radius" aria-pressed="false">Contact radius</button>
+            <button type="button" class="lchip" data-layer="heat" aria-pressed="false">Hotspots</button>
+            <button type="button" class="lchip" data-layer="routes" aria-pressed="false">Routes</button>
+            <button type="button" class="lchip" data-layer="air" aria-pressed="false">Air pollution</button>
+            <button type="button" class="lchip" data-layer="wifi" aria-pressed="false">Wi-Fi coverage</button>
+            <button type="button" class="lchip" data-layer="sat" aria-pressed="false">Satellite</button>
+            <button type="button" class="lchip" data-layer="weather" aria-pressed="true">Weather</button>
+            <button type="button" class="lchip" data-layer="motion" aria-pressed="true" title="Rain streaks, lightning bolts, splashes. If these never show up, your device may have 'reduce motion' on &#8212; this switch overrides that.">Rain &amp; FX</button>
+            <button type="button" class="lchip" data-layer="labels" aria-pressed="true">Labels</button>
+          </div>
+        </div>
+        <div class="map-wrap" id="mapWrap">
+          <canvas id="world" data-tool="inspect" aria-label="Live city map. Every person is an agent; colours show health state."></canvas>
+          <div class="hud hud-tr" id="hudEnv"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" id="hudWxIco"></svg><span id="hudWx">Sunny</span><span class="sep">|</span><span class="aqi-tag" id="hudAqi">AQI –</span></div>
+          <div class="hud hud-tl" id="hud"><span id="hudDay">DAY 0 · MON 06:00</span><span class="sep">|</span><span class="hud-i" id="hudI">3 infectious</span><span class="sep hud-x">|</span><span class="hud-x" id="hudOut">0 out · 0 cars</span></div>
+          <div class="zoom-stack">
+            <button class="zbtn" id="zoomIn" type="button" title="Zoom in (+)" aria-label="Zoom in"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+            <button class="zbtn" id="zoomOut" type="button" title="Zoom out (−)" aria-label="Zoom out"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg></button>
+            <button class="zbtn" id="zoomFit" type="button" title="Show the whole town (0)" aria-label="Show the whole town">1:1</button>
+            <button class="zbtn track" id="trackBtn" type="button" aria-pressed="false" title="Follow the selected person (T)" aria-label="Follow the selected person"><span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M1 12h4M19 12h4"/></svg><small>TRACK</small></span></button>
+          </div>
+          <div class="standby" id="standby">
+            <div class="eyebrow">System ready</div>
+            <h3 id="standbyTitle">Baseline</h3>
+            <p>500 people live in this city with an airport, a motorway and brick kilns. It is Monday, 6 in the morning, and three people are already infectious. Pick a scenario or press Start.</p>
+            <button class="tbtn go" id="standbyStart" type="button"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M4 2.5v11l9-5.5z"/></svg>Start simulation</button>
+          </div>
+          <div class="overload" id="overload" hidden>
+            <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5 15 14H1z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 6v4M8 11.6v.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span class="ov-long">Hospital full · seriously ill people waiting at home</span><span class="ov-short">Hospital full</span>
+          </div>
+          <canvas id="minimap" hidden aria-label="Minimap"></canvas>
+          <div class="tooltip" id="tooltip" hidden></div>
+        </div>
+        <div class="legend" aria-label="Legend">
+          <span style="color:var(--s)"><i class="dot" style="background:var(--s)"></i><b style="color:var(--muted);font-weight:400">Susceptible</b></span>
+          <span style="color:var(--e)"><i class="dot" style="background:var(--e)"></i><b style="color:var(--muted);font-weight:400">Exposed</b></span>
+          <span style="color:var(--i)"><i class="dot" style="background:var(--i)"></i><b style="color:var(--muted);font-weight:400">Infectious</b></span>
+          <span style="color:var(--r)"><i class="dot" style="background:var(--r)"></i><b style="color:var(--muted);font-weight:400">Recovered</b></span>
+          <span><svg class="sym" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7" stroke="#74818f" stroke-width="2" stroke-linecap="round"/></svg>Deceased</span>
+          <span><svg class="sym" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="3.2" fill="#9fb3c8"/><circle cx="6" cy="6" r="5" fill="none" stroke="#b197fc" stroke-width="1.6"/></svg>Vaccinated</span>
+          <span><svg class="sym" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5" fill="#9fb3c8"/><circle cx="6" cy="6" r="2.1" fill="#eef4f9"/></svg>Mask (white centre)</span>
+          <span><svg class="sym" viewBox="0 0 16 12" aria-hidden="true"><path d="M1 6h14" stroke="#ff4d4f" stroke-width="1.6"/></svg>Who infected whom</span>
+          <span><svg class="sym" viewBox="0 0 18 12" aria-hidden="true"><rect x="1" y="3" width="16" height="7" rx="2" fill="#5b8bd6"/><circle cx="9" cy="6.5" r="2" fill="#ff4d4f"/></svg>Car (dot = driver's health)</span>
+          <span><svg class="sym" viewBox="0 0 18 12" aria-hidden="true"><rect x="1" y="3" width="16" height="7" rx="2" fill="#f2f4f6"/><path d="M9 4v5M6.5 6.5h5" stroke="#e3262b" stroke-width="1.6"/></svg>Ambulance</span>
+          <span><svg class="sym" viewBox="0 0 18 12" aria-hidden="true"><rect x="1" y="3" width="16" height="7" rx="2" fill="#f2c230"/><rect x="8" y="4.5" width="2" height="4" fill="#1b1b1b"/></svg>Taxi</span>
+          <span><svg class="sym" viewBox="0 0 12 14" aria-hidden="true"><rect x="3.5" y="1" width="5" height="12" rx="1.5" fill="#0b0f14"/><circle cx="6" cy="4" r="1.3" fill="#ff3b30"/><circle cx="6" cy="7" r="1.3" fill="#555"/><circle cx="6" cy="10" r="1.3" fill="#555"/></svg>Traffic light</span>
+          <span><svg class="sym" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 7L7 1A6 6 0 0 1 13 7z" fill="#e0393e"/><path d="M7 7L13 7A6 6 0 0 1 7 13z" fill="#fff"/><path d="M7 7L7 13A6 6 0 0 1 1 7z" fill="#e0393e"/><path d="M7 7L1 7A6 6 0 0 1 7 1z" fill="#fff"/><circle cx="5" cy="9" r="2" fill="#1d3a6b"/></svg>Traffic police</span>
+          <span><svg class="sym" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.5" fill="none" stroke="#ff4d4f" stroke-width="1.6"/><ellipse cx="7" cy="7" rx="1.5" ry="3" fill="#9fb3c8"/></svg>Injured (waiting)</span>
+          <span><svg class="sym" viewBox="0 0 16 14" aria-hidden="true"><circle cx="5" cy="9" r="4" fill="#8a8580" opacity=".7"/><circle cx="10" cy="5" r="4.5" fill="#8a8580" opacity=".5"/></svg>Kiln smoke</span>
+          <span><svg class="sym" viewBox="0 0 20 12" aria-hidden="true"><path d="M2 6h16M10 6l-3-5h2l4 5-4 5H7z" stroke="#d8dee5" stroke-width="1.6" fill="#d8dee5"/></svg>Plane · helicopter</span>
+          <span>Zoom with the wheel or +, drag to move</span>
+        </div>
+      </div>
+
+      <div class="row-3 city-row" id="rowCity">
+        <div class="card" id="cardEnv">
+          <div class="card-head"><h2 class="card-title"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17a4 4 0 0 1-.5-8A6 6 0 0 1 18 9a4 4 0 0 1 0 8z"/><path d="M3 21h18"/></svg>Weather &amp; air</h2><span class="chip mono" id="envChip">–</span></div>
+          <div class="card-body">
+            <div class="env-top">
+              <div class="wx"><svg class="ico wx-ico" viewBox="0 0 24 24" aria-hidden="true" id="wxIco"></svg><div><b id="wxName">–</b><small id="wxNote">–</small></div></div>
+              <div class="aqi"><span class="aqi-num" id="aqiNum">–</span><span class="aqi-lab">Air quality index<small id="aqiCat">–</small></span></div>
+            </div>
+            <div class="aqi-bar" aria-hidden="true"><i id="aqiMark"></i></div>
+            <div class="aqi-scale" aria-hidden="true"><span>Good</span><span>Moderate</span><span>Unhealthy</span><span>Very unhealthy</span><span>Hazardous</span></div>
+            <canvas id="aqiChart" aria-label="Air quality index over time"></canvas>
+            <ul class="ind-list">
+              <li><span>PM2.5 over the city</span><b id="kPm">–</b></li>
+              <li><span>Brick kilns burning</span><b id="kKilns">–</b></li>
+              <li><span>Daylight</span><b id="kSun">–</b></li>
+            </ul>
+          </div>
+        </div>
+        <div class="card" id="cardRoad">
+          <div class="card-head"><h2 class="card-title"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="2" width="8" height="20" rx="3"/><circle cx="12" cy="7" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="17" r="1.5"/></svg>Roads &amp; safety</h2><span class="chip mono" id="roadChip">0 crashes</span></div>
+          <div class="card-body">
+            <canvas id="roadChart" aria-label="Road crashes per day"></canvas>
+            <ul class="ind-list">
+              <li><span>City accidents</span><b><span id="kAcc">0</span><small id="kAccNote">0 today</small></b></li>
+              <li><span>Injured · killed on city roads</span><b id="kInj">0 · 0</b></li>
+              <li><span>Cars driving · waiting at red</span><b id="kCars">0 · 0</b></li>
+              <li><span>Red lights run</span><b><span id="kRed">0</span><small id="kPolice">–</small></b></li>
+              <li><span>Motorway</span><b><span id="kMw">open</span><small id="kMwNote">–</small></b></li>
+              <li><span>Motorway crashes (vehicles)</span><b><span id="kMwAcc">0</span><small id="kMwCas">–</small></b></li>
+              <li><span>Air ambulance</span><b><span id="kHeli">on the helipad</span><small id="kHeliNote">–</small></b></li>
+            </ul>
+          </div>
+        </div>
+        <div class="card" id="cardLife">
+          <div class="card-head"><h2 class="card-title"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M16 4.5l2 2 4-4"/></svg>People &amp; travel</h2><span class="chip mono" id="lifeChip">–</span></div>
+          <div class="card-body">
+            <div class="meter-row"><span>City stress</span><b id="kStress">0%</b></div>
+            <div class="meter big"><i id="stressBar"></i></div>
+            <div class="now-grid" id="nowGrid"></div>
+            <ul class="ind-list">
+              <li><span>Flights today</span><b><span id="kFlights">0</span><small id="kFlightsNote">–</small></b></li>
+              <li><span>Flight delays</span><b><span id="kDelays">0</span><small id="kDelaysNote">–</small></b></li>
+              <li><span>Travellers away</span><b id="kAway">0</b></li>
+              <li><span>Imported cases (from abroad)</span><b id="kImport">0</b></li>
+              <li><span>Smokers · gym-goers</span><b id="kLife">0 · 0</b></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="row-2" id="rowCurve">
+        <div class="card">
+          <div class="card-head">
+            <h2 class="card-title"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"/><path d="M6 16c3 0 4-9 7-9s3 6 7 6"/></svg>Epidemic curve</h2>
+            <div class="seg" id="curveSeg" role="group" aria-label="Chart style">
+              <button type="button" data-mode="stacked" aria-pressed="true">Stacked</button>
+              <button type="button" data-mode="lines" aria-pressed="false">Lines</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="chart-wrap" id="curveWrap">
+              <canvas id="curve" aria-label="Epidemic curve: share of the population in each state over time"></canvas>
+              <div class="chart-tip" id="curveTip" hidden></div>
+            </div>
+            <div class="chart-legend">
+              <span><i class="dot" style="background:var(--i)"></i>Infectious</span>
+              <span><i class="dot" style="background:var(--e)"></i>Exposed</span>
+              <span><i class="dot" style="background:var(--r)"></i>Recovered</span>
+              <span><i class="dot" style="background:var(--d)"></i>Died of the disease</span>
+              <span><i class="dot" style="background:var(--x)"></i>Died on the roads</span>
+              <span><i class="dot" style="background:var(--v)"></i>Vaccinated &amp; healthy</span>
+              <span><i class="dot" style="background:var(--s)"></i>Susceptible</span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2 class="card-title"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"/><path d="M7 10l3 2-3 2M12 15h5"/></svg>Event feed</h2><span class="chip mono" id="logCount">0</span></div>
+          <div style="padding-top:8px"><ul class="log-list" id="logList"></ul></div>
+        </div>
+      </div>
+
+      <div class="row-3" id="rowAnalysis">
+        <div class="card">
+          <div class="card-head"><h2 class="card-title"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>Where infections happen</h2></div>
+          <div class="card-body">
+            <div class="where-rows" id="whereRows"></div>
+            <p class="stat-line" id="whereStat">Appears after the first infections.</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2 class="card-title"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="5" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.3 10.8l7.4-4.4M8.3 13.2l7.4 4.4"/></svg>Who spreads it?</h2></div>
+          <div class="card-body">
+            <div class="eyebrow" style="margin-bottom:6px">People infected by each finished case</div>
+            <canvas id="spread" aria-label="Histogram of how many people each case infected"></canvas>
+            <p class="stat-line" id="spreadStat">Appears when the first cases finish.</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2 class="card-title"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-7"/></svg>Age groups</h2></div>
+          <div class="card-body">
+            <div class="age-rows" id="ageRows"></div>
+            <div class="age-foot"><span><i style="background:linear-gradient(90deg,rgba(255,184,61,.6),rgba(255,77,79,.7))"></i>Ever infected</span><span><i style="background:var(--ink)"></i>Died</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="expCard">
+        <div class="card-head">
+          <h2 class="card-title"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6A2 2 0 0 0 19 18l-5-9V3"/><path d="M7.5 15h9"/></svg>Experiments</h2>
+          <button class="btn small" id="saveRunBtn" type="button">Save this run</button>
+          <button class="btn small" id="copyCsvBtn" type="button">Copy data (CSV)</button>
+          <button class="btn small" id="fullCsvBtn" type="button" title="Every hourly series the model tracks: epidemic curve, energy, water, waste, kilns, fuel, illness, Wi-Fi, buses, AQI and more">Download full report (CSV)</button>
+          <button class="btn small" id="clearRunsBtn" type="button">Clear</button>
+        </div>
+        <div class="card-body">
+          <div class="exp-grid">
+            <div>
+              <div class="eyebrow" style="margin-bottom:6px">Infectious people over time, % of population</div>
+              <div class="chart-wrap"><canvas id="compare" aria-label="Infectious curves of saved runs"></canvas></div>
+            </div>
+            <div class="table-wrap">
+              <table class="runs">
+                <thead><tr><th>Run</th><th class="n">Peak</th><th class="n">Peak day</th><th class="n" title="Share of people infected at least once">Infected</th><th class="n" title="Deaths from the disease">Deaths</th><th class="n" title="Deaths in road accidents">Road</th><th class="n" title="Average air quality index">AQI</th><th class="n">Days</th><th class="n">R₀</th></tr></thead>
+                <tbody id="runsBody"></tbody>
+              </table>
+              <p class="empty" id="runsEmpty" style="padding-left:0">Each finished outbreak is saved here automatically. Run two scenarios to compare them.</p>
+            </div>
+          </div>
+          <textarea class="csv-box" id="csvBox" hidden readonly aria-label="Simulation data as CSV"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= RIGHT RAIL ================= -->
+    <aside class="col-right" aria-label="Telemetry">
+      <div class="card" id="cardPop">
+        <div class="card-head"><h2 class="card-title"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><circle cx="17.5" cy="9" r="2.6"/><path d="M17 14.5c2.5.2 4 1.8 4.5 4.5"/></svg>Population</h2><span class="chip mono" id="popTotal">500</span></div>
+        <div class="card-body"><div class="tiles" id="tiles"></div></div>
+      </div>
+
+      <div class="card" id="cardAi">
+        <div class="card-head"><h2 class="card-title">AI analyst (live)</h2><span class="chip mono" id="aiSimChip">–</span></div>
+        <div class="card-body"><p class="stat-line mono" id="aiSimClock">–</p><p class="ai-txt"><b>Best:</b> <span id="aiSimBest">–</span></p><p class="ai-txt"><b>Worst:</b> <span id="aiSimWorst">–</span></p><p class="ai-txt"><b>Do now:</b> <span id="aiSimRec">–</span></p><p class="ai-txt"><b>Update:</b> <span id="aiSimUpd">–</span></p></div>
+      </div>
+
+      <div class="card" id="cardInd">
+        <div class="card-head"><h2 class="card-title"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>Spread indicators</h2></div>
+        <div class="card-body">
+          <svg class="gauge" viewBox="0 0 200 150" role="img" aria-labelledby="gaugeCap">
+            <path class="g-track" d="M20 100 A80 80 0 0 1 180 100"/>
+            <path class="g-zone" d="M20 100 A80 80 0 0 1 43.4 43.4" stroke="#2ee6a1"/>
+            <path class="g-zone" d="M43.4 43.4 A80 80 0 0 1 100 20" stroke="#ffb83d"/>
+            <path class="g-zone" d="M100 20 A80 80 0 0 1 180 100" stroke="#ff4d4f"/>
+            <g id="gTicks"></g>
+            <line class="g-needle" id="gNeedle" x1="100" y1="100" x2="57" y2="100"/>
+            <circle class="g-hub" cx="100" cy="100" r="5"/>
+            <text class="g-val" id="gVal" x="100" y="131" text-anchor="middle">–</text>
+            <text class="g-cap" id="gaugeCap" x="100" y="147" text-anchor="middle">Rₜ · people infected per case</text>
+          </svg>
+          <ul class="ind-list">
+            <li><span>Rₜ trend</span><b id="kRtNote">needs 5 finished cases</b></li>
+            <li><span>R₀ (first 30 cases)</span><b><span id="kR0">–</span><small id="kHit">ready when first 30 cases end</small></b></li>
+            <li><span>Peak infectious</span><b><span id="kPeak">0</span><small id="kPeakDay">day –</small></b></li>
+            <li><span>Ever infected</span><b><span id="kAttack">0%</span><small id="kAttackN">0 infections</small></b></li>
+            <li><span>In isolation</span><b><span id="kIso">0</span><small id="kIsoNote">test &amp; isolate off</small></b></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card" id="cardHosp">
+        <div class="card-head"><h2 class="card-title"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 7v10M7 12h10"/></svg>City hospital</h2><span class="chip mono" id="bedChip">0 / 8 beds</span></div>
+        <div class="card-body">
+          <div class="beds" id="beds" aria-label="Hospital beds"></div>
+          <canvas id="hospChart" aria-label="Hospital patients over time compared with the number of beds"></canvas>
+          <ul class="ind-list">
+            <li><span>Waiting for a bed or ambulance</span><b id="kWait">0</b></li>
+            <li><span>Ambulances on the road</span><b id="kAmb">0 / 3</b></li>
+            <li><span>In hospital so far</span><b id="kAdmit">0</b></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card" id="cardIns">
+        <div class="card-head"><h2 class="card-title"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 21c1-4 3.8-6 7-6s6 2 7 6"/></svg>Agent inspector</h2><span class="hint" id="insHint"></span></div>
+        <div class="card-body" id="inspector"></div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<section id="tab-twin" role="tabpanel" aria-labelledby="tabbtn-twin" hidden>
+  <div class="twin">
+    <div class="twin-intro card">
+      <div class="card-body">
+        <div class="eyebrow">Smart city digital twin</div>
+        <p class="lede">Power, water, waste, sensors, city crews and fires run inside the same city as the people. Everything here is live: change a setting on the Simulation tab (or inject an incident below) and watch the numbers move. The checks at the bottom prove that energy, water and waste are conserved.</p>
+        <div class="twin-bar">
+          <label class="twin-role">Role <select class="sel" id="roleSel" aria-label="Control-room role"><option value="viewer">Viewer (read only)</option><option value="operator">Operator (live settings, incidents)</option><option value="admin" selected>Admin (everything, import)</option></select></label>
+          <button type="button" class="btn small" id="exportBtn">Export settings (JSON)</button>
+          <button type="button" class="btn small" id="importBtn">Import settings</button>
+          <button type="button" class="btn small" id="exportCsvBtn">Export twin data (CSV)</button>
+          <span class="stat-line" id="roleNote"></span>
+        </div>
+        <textarea class="csv-box" id="ioBox" hidden aria-label="Settings JSON"></textarea>
+        <div class="twin-bar" id="ioBar" hidden><button type="button" class="btn small" id="ioApply">Apply imported settings</button><button type="button" class="btn small" id="ioClose">Close</button></div>
+      </div>
+    </div>
+
+    <div class="twin-grid">
+      <div class="card wide ai-top"><div class="card-head"><h2 class="card-title">AI analyst: the whole city, live</h2><span class="chip mono" id="aiOverall">–</span></div><div class="card-body">
+        <p class="stat-line mono" id="aiClock">Waiting for the first reading...</p>
+        <div class="ai-cols">
+          <div><p class="stat-line"><b>Best point</b></p><p id="aiBest" class="ai-txt">–</p><p class="stat-line"><b>Worst thing</b></p><p id="aiWorst" class="ai-txt">–</p></div>
+          <div><p class="stat-line"><b>Recommendations (do now)</b></p><ul class="req-list" id="aiRecs"></ul></div>
+          <div><p class="stat-line"><b>Updates to make</b></p><ul class="req-list" id="aiUpds"></ul></div>
+        </div>
+        <div class="score" id="aiScores"></div>
+      </div></div>
+
+      <div class="card"><div class="card-head"><h2 class="card-title">Energy</h2><span class="chip mono" data-k="gridChip">–</span></div><div class="card-body">
+        <ul class="ind-list">
+          <li><span>Demand · served</span><b data-k="kwDemand">–</b></li>
+          <li><span>Solar · battery charge</span><b data-k="solarBat">–</b></li>
+          <li><span>Grid import · diesel</span><b data-k="gridDiesel">–</b></li>
+          <li><span>Signals · street lights</span><b data-k="sigLights">–</b></li>
+          <li><span>Unserved energy · outage time</span><b data-k="unserved">–</b></li>
+          <li><span>Bill so far</span><b data-k="bill">–</b></li>
+        </ul>
+        <canvas class="tchart" data-chart="energy" aria-label="Power demand, solar output and battery charge"></canvas>
+      </div></div>
+
+      <div class="card"><div class="card-head"><h2 class="card-title">Water</h2><span class="chip mono" data-k="waterChip">–</span></div><div class="card-body">
+        <ul class="ind-list">
+          <li><span>Tank</span><b data-k="tank">–</b></li>
+          <li><span>Demand · delivered</span><b data-k="wDemand">–</b></li>
+          <li><span>Shortage (water stress)</span><b data-k="wStress">–</b></li>
+          <li><span>Pumps · leaks</span><b data-k="pumpLeak">–</b></li>
+          <li><span>Open main bursts</span><b data-k="bursts">–</b></li>
+          <li><span>Flooding on roads</span><b data-k="flood">–</b></li>
+        </ul>
+        <canvas class="tchart" data-chart="water" aria-label="Water tank level and flooding"></canvas>
+      </div></div>
+
+      <div class="card"><div class="card-head"><h2 class="card-title">Waste</h2><span class="chip mono" data-k="wasteChip">–</span></div><div class="card-body">
+        <ul class="ind-list">
+          <li><span>Rubbish produced · collected</span><b data-k="wGen">–</b></li>
+          <li><span>Recycled · buried · burnt</span><b data-k="wDisp">–</b></li>
+          <li><span>Bins overflowing now</span><b data-k="overNow">–</b></li>
+          <li><span>Overflow events so far</span><b data-k="overTot">–</b></li>
+          <li><span>Trucks busy</span><b data-k="trucks">–</b></li>
+        </ul>
+        <canvas class="tchart" data-chart="waste" aria-label="Average bin fill level"></canvas>
+      </div></div>
+
+      <div class="card"><div class="card-head"><h2 class="card-title">City services</h2><span class="chip mono" data-k="svcChip">–</span></div><div class="card-body">
+        <ul class="ind-list">
+          <li><span>Open service requests</span><b data-k="reqOpen">–</b></li>
+          <li><span>Solved · average response</span><b data-k="reqDone">–</b></li>
+          <li><span>Crews busy · fire engines out</span><b data-k="crews">–</b></li>
+          <li><span>Fires burning · total</span><b data-k="fires">–</b></li>
+          <li><span>Fire injuries · deaths</span><b data-k="fireHurt">–</b></li>
+          <li><span>Lightning strikes · caused</span><b data-k="strikes">–</b></li>
+          <li><span>Ambulances out · yielded to</span><b data-k="ambYield">–</b></li>
+        </ul>
+        <div class="req-list" data-k="reqList"></div>
+      </div></div>
+
+      <div class="card"><div class="card-head"><h2 class="card-title">Daily life &amp; transport</h2><span class="chip mono" data-k="lifeChip">–</span></div><div class="card-body">
+        <ul class="ind-list">
+          <li><span>Buses running · riders aboard</span><b data-k="busNow">–</b></li>
+          <li><span>Bus rides so far</span><b data-k="busRides">–</b></li>
+          <li><span>People cycling</span><b data-k="bikes">–</b></li>
+          <li><span>Prayer now</span><b data-k="prayer">–</b></li>
+          <li><span>Funerals · buried</span><b data-k="funerals">–</b></li>
+          <li><span>Grocery deliveries</span><b data-k="deliv">–</b></li>
+          <li><span>Mart · mandi crowd</span><b data-k="shops">–</b></li>
+          <li><span>Parking: public spaces · driving</span><b data-k="parking">–</b></li>
+          <li><span>Cars still at home</span><b data-k="parkingHome">–</b></li>
+        </ul>
+        <canvas class="tchart" data-chart="bus" aria-label="Buses running over time"></canvas>
+      </div></div>
+
+      <div class="card wide"><div class="card-head"><h2 class="card-title">Kilns seen from space</h2><span class="chip mono" data-k="seasonChip">–</span></div><div class="card-body">
+        <ul class="ind-list">
+          <li><span>Season · temperature</span><b data-k="ksSeason">–</b></li>
+          <li><span>Satellite sensors</span><b data-k="ksMode">–</b></li>
+          <li><span>Kilns burning (truth)</span><b data-k="ksTrue">–</b></li>
+          <li><span>Satellite pass</span><b data-k="ksPass">–</b></li>
+          <li><span>Satellite says burning</span><b data-k="ksSays">–</b></li>
+          <li><span>Wrong calls</span><b data-k="ksWrong">–</b></li>
+          <li><span>Official registry says zigzag</span><b data-k="ksReg">–</b></li>
+          <li><span>Truly zigzag · satellite says zigzag</span><b data-k="ksZig">–</b></li>
+          <li><span>Smoke inventory error (satellite vs truth)</span><b data-k="ksInv">–</b></li>
+          <li><span>City area with unhealthy smoke (PM2.5 over 55)</span><b data-k="ksCover">–</b></li>
+          <li><span>Kilns' share of the smoke</span><b data-k="ksShare">–</b></li>
+          <li><span>Inspections · sealed · wasted</span><b data-k="ksDisp">–</b></li>
+        </ul>
+        <div class="table-wrap"><table class="runs"><thead><tr><th>Kiln</th><th>Satellite</th><th>Truth</th><th>Type: sat / truth</th><th class="n">PM2.5</th><th>Control</th></tr></thead><tbody data-k="ksRows" id="kilnRows"></tbody></table></div>
+        <div class="inj-row"><button type="button" class="btn small" id="dispatchBtn">Send inspectors to flagged kilns</button><span class="stat-line" data-k="ksLast">–</span></div>
+        <canvas class="tchart" data-chart="kiln" aria-label="Kilns burning, by hour"></canvas>
+        <details class="papers"><summary>Your research under this graph: what the two papers say</summary>
+          <p class="stat-line"><b>Paper 1: per-kiln, per-date firing detection (remote sensing physics).</b></p>
+          <ul class="req-list"><li>Sentinel-2 SWIR cannot see a kiln fire: an insulated roof at 70&ndash;90 &deg;C adds only about 0.14% to the pixel signal, below sensor noise. Satellite mode "SWIR heat only" is therefore close to random here.</li><li>Fire activity must be inferred from several signals: coal and brick piles and smoke plumes (Sentinel-2), ground heat after daytime (Landsat/ECOSTRESS), and radar yard changes (Sentinel-1) that work through fog.</li><li>Records are noisy: the registry says every kiln is zigzag but only 14% are; some kilns fire at night; fire-alert points mostly show crop burning, not kilns.</li></ul>
+          <p class="stat-line"><b>Paper 2: kiln technology recognition across the India&ndash;Pakistan border (literature review and roadmap).</b></p>
+          <ul class="req-list"><li>Finding the kiln transfers across the border (CA mAP50 drops only 1.6 points) but naming its technology fails: 56% of Pakistani FCBK kilns are called zigzag, against 17% in India.</li><li>Balanced sampling fixes class separation but over-reports zigzag (37% instead of 14%); prior calibration is the proposed fix.</li><li>Wrong technology means wrong smoke totals: zigzag kilns emit over 60% less. The model shows this as "smoke inventory error".</li></ul>
+          <p class="stat-line"><b>Updates and recommendations from the papers.</b> Drop SWIR thresholds; combine optical, thermal and radar; freeze a kiln registry (SentinelKilnDB 12,177 + Hamdani about 11,000 + EPA 7,891 IDs) as the spatial anchor; train a student on public sensors from daily 3 m images; correct label shift (class probability matching, logit adjustment); and dispatch only confident calls (selective prediction). Full list and the link to each model setting: Research tab, section 13.</p>
+        </details>
+      </div></div>
+
+      <div class="card wide"><div class="card-head"><h2 class="card-title">Kiln study: live AI summary</h2><span class="chip mono" data-k="kgChip">–</span></div><div class="card-body">
+        <p class="stat-line mono" data-k="kgTime">–</p>
+        <div class="ai-cols">
+          <div><p class="stat-line"><b>What we got (now)</b></p><ul class="req-list" data-k="kgGot"></ul><p class="stat-line"><b>Good points</b></p><ul class="req-list" data-k="kgGood"></ul></div>
+          <div><p class="stat-line"><b>Drawbacks (worst things)</b></p><ul class="req-list" data-k="kgBad"></ul></div>
+          <div><p class="stat-line"><b>Updates</b></p><ul class="req-list" data-k="kgUpd"></ul><p class="stat-line"><b>Recommendations</b></p><ul class="req-list" data-k="kgRec"></ul></div>
+        </div>
+        <p class="stat-line">Rewritten every second from the live run. Reference test runs (7 days, 3 seeds): winter shutdown cut mean AQI 49&ndash;56%; zigzag kilns cut it 29%; radar-based satellite sensing stays accurate in fog. See Research tab sections 12 and 13.</p>
+      </div></div>
+
+      <div class="card"><div class="card-head"><h2 class="card-title">Fuel &amp; resource use</h2><span class="chip mono" data-k="fuelChip">–</span></div><div class="card-body">
+        <ul class="ind-list">
+          <li><span>Fuel today</span><b data-k="fuelToday">–</b></li>
+          <li><span>Fuel since start</span><b data-k="fuelTotal">–</b></li>
+          <li><span>Water use</span><b data-k="waterUse">–</b></li>
+          <li><span>Electricity use</span><b data-k="elecUse">–</b></li>
+          <li><span>Fog &amp; visibility</span><b data-k="fogChip">–</b></li>
+        </ul>
+        <canvas class="tchart" data-chart="fuel" aria-label="Litres of fuel burned per hour"></canvas>
+        <p class="stat-line">Set the petrol price, fuel efficiency, water-use and electricity-use sliders in "Resources &amp; realism" to test different policies.</p>
+      </div></div>
+
+      <div class="card"><div class="card-head"><h2 class="card-title">Common illness &amp; chronic conditions</h2><span class="chip mono" data-k="commonChip">–</span></div><div class="card-body">
+        <ul class="ind-list">
+          <li><span>Sick right now</span><b data-k="commonNow">–</b></li>
+          <li><span>Cases so far</span><b data-k="commonTotal">–</b></li>
+          <li><span>Chronic conditions</span><b data-k="chronicShare">–</b></li>
+          <li><span>Pharmacy stock</span><b data-k="medStock">–</b></li>
+          <li><span>Medicine used</span><b data-k="medUsed">–</b></li>
+        </ul>
+        <canvas class="tchart" data-chart="sick" aria-label="People with flu, cough or fever, and medicine stock"></canvas>
+        <p class="stat-line">Flu, cough, fever and sore throat are ordinary illness, separate from the main disease. Diabetes, high blood pressure and asthma make the main disease more severe if a person catches it.</p>
+      </div></div>
+
+      <div class="card"><div class="card-head"><h2 class="card-title">Real-world scale</h2><span class="chip mono" data-k="rwScale">–</span></div><div class="card-body">
+        <ul class="ind-list">
+          <li><span>Water needed</span><b data-k="rwWater">–</b></li>
+          <li><span>Electricity needed</span><b data-k="rwElec">–</b></li>
+          <li><span>Fuel needed</span><b data-k="rwFuel">–</b></li>
+          <li><span>Waste produced</span><b data-k="rwWaste">–</b></li>
+          <li><span>Medicine needed</span><b data-k="rwMed">–</b></li>
+          <li><span>Hospital beds &amp; kilns</span><b data-k="rwBeds">–</b></li>
+        </ul>
+        <p class="stat-line">Set "Real city this represents" (Resources &amp; realism) to scale this 500-person simulation to a real city's size and see the resources it would need, per day.</p>
+      </div></div>
+
+      <div class="card"><div class="card-head"><h2 class="card-title">City TV news</h2><span class="chip mono" data-k="tvChip">–</span></div><div class="card-body">
+        <div class="tv"><div class="tv-screen"><span class="tv-live">LIVE</span><b data-k="tvHead">Waiting for news...</b><i data-k="tvCh"></i></div></div>
+        <ul class="ind-list"><li><span>Public awareness</span><b data-k="tvAware">–</b></li><li><span>Headlines so far</span><b data-k="tvCount">–</b></li></ul>
+        <div class="table-wrap"><table class="runs"><thead><tr><th>Time</th><th>Channel</th><th>Headline</th></tr></thead><tbody data-k="tvRows"></tbody></table></div>
+        <p class="stat-line">Events become headlines. Watching the news makes people go to parks and Funland less (up to 35%).</p>
+      </div></div>
+
+      <div class="card"><div class="card-head"><h2 class="card-title">Traffic cameras and e-challan</h2><span class="chip mono" data-k="chChip">–</span></div><div class="card-body">
+        <ul class="ind-list"><li><span>Challans issued</span><b data-k="chN">–</b></li><li><span>Speeding · red light</span><b data-k="chK">–</b></li><li><span>Fines</span><b data-k="chF">–</b></li><li><span>Repeat offenders</span><b data-k="chR">–</b></li><li><span>Red-light runs · accidents</span><b data-k="chA">–</b></li></ul>
+        <div class="table-wrap"><table class="runs"><thead><tr><th>Plate</th><th>Offence</th><th class="n">Speed</th><th class="n">Fine (PKR)</th></tr></thead><tbody data-k="chRows"></tbody></table></div>
+        <p class="stat-line">Cameras read plates and fine drivers who speed (over 7% above the limit) or run a red light. A fined driver slows down a little, so more challans slowly mean fewer offences.</p>
+      </div></div>
+
+      <div class="card"><div class="card-head"><h2 class="card-title">AI advisor and air forecast</h2><span class="chip mono" data-k="aiChip">–</span></div><div class="card-body">
+        <ul class="ind-list"><li><span>Air quality forecast, next 6 hours</span><b data-k="aiFc">–</b></li><li><span>Forecast error so far (6 h ahead)</span><b data-k="aiErr">–</b></li><li><span>Autopilot actions</span><b data-k="aiActs">–</b></li></ul>
+        <div class="table-wrap"><table class="runs"><thead><tr><th>Advice</th><th>What and why</th><th></th></tr></thead><tbody data-k="aiRows" id="aiRows"></tbody></table></div>
+        <p class="stat-line">The forecast adds yesterday's change at the same hours to today's reading. The advisor uses simple rules. Turn on <b>AI autopilot</b> in settings to let it send smog alerts and pause construction by itself.</p>
+      </div></div>
+
+      <div class="card"><div class="card-head"><h2 class="card-title">Construction, Sky Tower, Funland</h2><span class="chip mono" data-k="nfChip">–</span></div><div class="card-body">
+        <ul class="ind-list">
+          <li><span>Construction site</span><b data-k="nfCons">–</b></li>
+          <li><span>Site status · dust</span><b data-k="nfConsSt">–</b></li>
+          <li><span>Sky Tower inside · peak</span><b data-k="nfSky">–</b></li>
+          <li><span>Sky Tower lift wait · power</span><b data-k="nfSky2">–</b></li>
+          <li><span>Funland inside · peak</span><b data-k="nfAmu">–</b></li>
+          <li><span>Funland status · power</span><b data-k="nfAmu2">–</b></li>
+          <li><span>Funland visits so far</span><b data-k="nfAmu3">–</b></li>
+          <li><span>Electric cars · charging load</span><b data-k="nfEv">–</b></li>
+        </ul>
+      </div></div>
+
+      <div class="card"><div class="card-head"><h2 class="card-title">Wi-Fi network</h2><span class="chip mono" data-k="wifiChip">–</span></div><div class="card-body">
+        <ul class="ind-list">
+          <li><span>Phones connected</span><b data-k="wfUsers">–</b></li>
+          <li><span>Traffic · capacity</span><b data-k="wfLoad">–</b></li>
+          <li><span>Link quality</span><b data-k="wfQ">–</b></li>
+          <li><span>Coverage (dead zones elsewhere)</span><b data-k="wfCov">–</b></li>
+          <li><span>Emergency alerts</span><b data-k="wfAlerts">–</b></li>
+        </ul>
+        <div class="table-wrap"><table class="runs"><thead><tr><th>Access point</th><th>Status</th><th class="n">Users</th><th class="n">Load</th><th class="n">Battery</th></tr></thead><tbody data-k="wfRows"></tbody></table></div>
+        <canvas class="tchart" data-chart="wifi" aria-label="Share of phones connected to Wi-Fi"></canvas>
+        <div class="inj-row"><button type="button" class="btn small" id="alertBtn">Send emergency alert</button><span class="stat-line">Phones get a message; some people go home.</span></div>
+      </div></div>
+
+      <div class="card"><div class="card-head"><h2 class="card-title">City scorecard</h2><span class="chip mono" data-k="score">–</span></div><div class="card-body">
+        <div class="score" data-k="scoreRows"></div>
+        <ul class="ind-list"><li><span>Bus load</span><b data-k="bus2">–</b></li></ul>
+        <p class="stat-line">Seven simple 0&ndash;100 scores averaged. The rules are listed on the Research tab.</p>
+      </div></div>
+
+      <div class="card"><div class="card-head"><h2 class="card-title">Sensors: truth vs control room</h2><span class="chip mono" data-k="sensChip">–</span></div><div class="card-body">
+        <div class="table-wrap"><table class="runs"><thead><tr><th>Sensor</th><th class="n">True</th><th class="n">Measured</th><th class="n">Received</th><th>Status</th></tr></thead><tbody data-k="sensRows"></tbody></table></div>
+        <ul class="ind-list">
+          <li><span>Air index: true · dashboard</span><b data-k="aqiPair">–</b></li>
+          <li><span>Smog-rule decisions: wrong · blind</span><b data-k="smogWrong">–</b></li>
+        </ul>
+        <canvas class="tchart" data-chart="aqi" aria-label="True air quality index versus the control-room dashboard"></canvas>
+      </div></div>
+    </div>
+
+    <div class="twin-grid two">
+      <div class="card"><div class="card-head"><h2 class="card-title">Inject an incident</h2></div><div class="card-body">
+        <p class="stat-line">Create a problem on purpose and watch how the city responds. Choose a place on the map with the <b>Incident</b> tool, or leave the location random.</p>
+        <div class="inj-row">
+          <select class="sel" id="injType" aria-label="Incident type">
+            <option value="fire">Building fire</option><option value="crash">Road crash</option><option value="burst">Water main burst</option>
+            <option value="fault">Transformer fault (one block)</option><option value="outage">Grid outage</option><option value="sensor">Sensor failure</option><option value="wifi">Wi-Fi access point down</option><option value="flood">Flood</option>
+          </select>
+          <label class="inj-f">Severity <input type="range" id="injSev" min="1" max="5" step="1" value="3"><b id="injSevV">3</b></label>
+          <label class="inj-f">Duration <input type="range" id="injMin" min="0" max="480" step="30" value="180"><b id="injMinV">3 h</b></label>
+        </div>
+        <div class="inj-row">
+          <button type="button" class="btn small" id="injGo">Inject now (random place)</button>
+          <button type="button" class="btn small" id="injMap">Pick a place on the map</button>
+          <span class="stat-line" id="injMsg"></span>
+        </div>
+      </div></div>
+
+      <div class="card"><div class="card-head"><h2 class="card-title">Audit log</h2><span class="chip mono" id="auditCount">0</span></div><div class="card-body">
+        <p class="stat-line">Every change of a setting, scenario, incident or manual override is recorded with the role that made it.</p>
+        <ul class="log-list audit" id="auditList"></ul>
+      </div></div>
+    </div>
+
+    <div class="card"><div class="card-head"><h2 class="card-title">Validation: conservation and consistency checks</h2><span class="chip mono" data-k="valChip">–</span></div><div class="card-body">
+      <div class="table-wrap"><table class="runs"><thead><tr><th>Check</th><th class="n">Largest error</th><th>Result</th><th>What it proves</th></tr></thead><tbody data-k="valRows"></tbody></table></div>
+    </div></div>
+
+    <div class="card"><div class="card-head"><h2 class="card-title">Parameter registry</h2><span class="chip mono" data-k="regCount">–</span></div><div class="card-body">
+      <p class="stat-line">All settings in one table: its group, current value, default, when a change takes effect, and which role may change it.</p>
+      <div class="table-wrap reg"><table class="runs"><thead><tr><th>Setting</th><th>Group</th><th class="n">Now</th><th class="n">Default</th><th>Applies</th><th>Role</th></tr></thead><tbody id="regBody"></tbody></table></div>
+    </div></div>
+  </div>
+</section>
+
+<section id="tab-agent" role="tabpanel" aria-labelledby="tabbtn-agent" hidden>
+  <div class="twin ag">
+    <div class="twin-intro card"><div class="card-body">
+      <div class="eyebrow">Agentic AI team · v17</div>
+      <p class="lede">A <b>team of twelve agents</b> runs the city's decision desk. Seven <b>specialist officers</b> (health, air quality, traffic, utilities, <b>finance</b>, <b>welfare</b> and the <b>birth centre</b>) watch their areas <b>every simulated minute</b>, find the cause of each problem and rank <b>several options</b>, including <b>out-of-the-box ones</b>: air purifiers, building filters, cloud seeding, water-mist guns, free buses, odd-even cars, cash relief, vaccination drives and more. A <b>strategist</b> joins measures into <b>packages</b>; a <b>coordinator</b> merges the plans; a <b>safety reviewer</b> checks every option (including its <b>price</b> against the treasury) before you see it; a <b>forecaster</b> tries the top options on a <b>copy of the city as it is right now</b>; and an <b>auditor</b> records every decision.</p>
+      <div class="ag-consent"><b>Strict consent.</b> Nothing in the city changes unless you press <b>Approve</b>. Big decisions, standing rules, hard-to-undo steps and anything the safety reviewer flags need a second click on <b>Confirm</b>. Every proposal shows its <b>price</b> and an <b>exit rule</b>. If you tick the box above the list when you approve, the measure may <b>ease in steps and lift by itself</b> when things get better (never the hard-to-undo ones); otherwise lifting is a proposal you decide on. Deny sends an option to the deny list for the days you choose (it returns sooner only if its problem becomes an emergency, and then still only as a question). <b>Never</b> keeps it away completely until you allow it.</div>
+      <p class="stat-line"><b>Honest label:</b> rule-based agents with a learning loop and a simulation-based forecaster. They run offline, use no language model and no internet, and show their reasoning line by line. All numbers are model predictions, not real-world advice. The forecaster sees one possible future of the model, not the real future.</p>
+    </div></div>
+
+    <div class="twin-grid">
+      <div class="card"><div class="card-head"><h2 class="card-title">Mission</h2><span class="chip mono" id="agChip">off</span></div><div class="card-body">
+        <label class="ag-row">Goal <select class="sel" id="agGoal"><option value="balanced">Balanced city</option><option value="lives">Protect lives (health first)</option><option value="air">Clean air</option><option value="infra">Keep the city running (power, water, roads)</option></select></label>
+        <label class="ag-row">Mode <select class="sel" id="agAuto"><option value="ask" selected>Ask me before every action (strict consent)</option><option value="advise">Advise only (suggests, never asks to act)</option></select></label>
+        <label class="ag-row">Plans every <select class="sel" id="agEvery"><option value="1">1 minute</option><option value="5">5 minutes</option><option value="15" selected>15 minutes</option><option value="30">30 minutes</option><option value="60">1 hour</option><option value="360">6 hours</option></select></label>
+        <label class="ag-row">Denied options return after <select class="sel" id="agDeny"><option value="1">1 day</option><option value="2" selected>2 days</option><option value="3">3 days</option><option value="5">5 days</option></select></label>
+        <label class="switch-row"><span>Forecaster agent: try the top options on a copy of the city before I decide (uses extra computing)</span><input type="checkbox" role="switch" id="agFc" checked></label>
+        <div class="twin-bar"><button type="button" class="btn small" id="agToggle">Switch agent ON</button><button type="button" class="btn small" id="agForget">Forget lessons</button></div>
+        <p class="stat-line" id="agStatus">The agent is off. Start the simulation, then switch it on.</p>
+        <p class="stat-line">It senses the city <b>every minute</b> whatever you choose; "Plans every" is how often it re-ranks options. An alarm (air quality passes 200, hospital fills, outage, storm, ...) makes it plan at once.</p>
+      </div></div>
+
+      <div class="card"><div class="card-head"><h2 class="card-title">Live watch (every minute)</h2><span class="chip mono" id="agCost">–</span></div><div class="card-body" id="agPress"></div>
+        <div class="card-body"><canvas class="tchart" id="agChart" aria-label="Pressure and burden over time"></canvas><p class="stat-line"><span style="color:#46c6e6">Blue</span>: city pressure for your goal (lower is better). <span style="color:#ffb83d">Amber</span>: burden of restrictions on people. Dots: actions.</p></div></div>
+
+      <div class="card wide"><div class="card-head"><h2 class="card-title">The agent team</h2><span class="chip mono" id="agTeamChip">8 agents</span></div><div class="card-body"><div class="table-wrap"><table class="runs"><thead><tr><th>Agent</th><th>Job</th><th>Right now</th></tr></thead><tbody id="agTeam"></tbody></table></div></div></div>
+
+      <div class="card wide"><div class="card-head"><h2 class="card-title">Early warnings</h2><span class="chip mono" id="agWarnN">0</span></div><div class="card-body"><div id="agWarn"></div></div></div>
+
+      <div class="card wide"><div class="card-head"><h2 class="card-title">Proposals waiting for you</h2><span class="chip mono" id="agPendN">0</span></div><div class="card-body"><p class="ag-result" id="agResult" role="status" aria-live="polite"></p><label class="stat-line" style="display:block;margin:0 0 8px"><input type="checkbox" id="agExitAuto" checked> When I approve a measure, it may <b>ease in steps and lift by itself</b> once things are better (hard-to-undo and standing rules always ask me first). Every step is written in the ledger and I can undo it.</label><div id="agPending"></div>
+        <p class="stat-line">Each officer shows its best option and the alternatives, with the safety reviewer's notes and the forecaster's result. <b>Approve</b> does that option (some need <b>Confirm</b> as a second click). <b>Deny</b> puts it on the deny list for the days you chose; it comes back sooner only as a question, and only in an emergency. <b>Never</b> keeps it away until you allow it. Alternatives stay available.</p>
+        <h3 class="eyebrow" style="margin:14px 0 6px">Deny list and never list <span class="chip mono" id="agDenyN">0</span></h3><div id="agDenyList"></div></div></div>
+
+      <div class="card wide"><div class="card-head"><h2 class="card-title">Your own idea</h2><span class="chip mono" id="agIdeaChip">–</span></div><div class="card-body">
+        <p class="stat-line" style="margin-top:0">Write what you would do, in plain words. Example: <i>close schools and ask everyone to wear masks</i>, <i>stop the brick kilns and ban construction</i>, <i>more police and speed cameras</i>.</p>
+        <textarea class="csv-box" id="agIdea" aria-label="Your idea" placeholder="Type your idea here" maxlength="600" style="min-height:70px"></textarea>
+        <div class="twin-bar"><button type="button" class="btn small" id="agIdeaCheck">Check my idea</button><button type="button" class="btn small" id="agIdeaNow" hidden>Try it on a copy of the city as it is now</button><button type="button" class="btn small" id="agIdeaTest" hidden>Test it on 3 fresh copies of my city</button><button type="button" class="btn small" id="agIdeaCancel" hidden>Cancel</button></div>
+        <div id="agIdeaOut"></div>
+        <div class="ag-prog" hidden id="agIdeaProgWrap"><i id="agIdeaProg"></i></div>
+        <div class="table-wrap"><table class="runs" id="agIdeaTable" hidden><thead><tr><th>Plan</th><th class="n">Harm</th><th class="n">Burden</th><th class="n">Total</th><th class="n">Peak inf.</th><th class="n">Deaths</th><th class="n">Seeds better</th></tr></thead><tbody id="agIdeaBody"></tbody></table></div>
+        <p class="stat-line" id="agIdeaMsg"></p>
+        <div class="twin-bar" id="agIdeaApply" hidden><button type="button" class="btn small" data-idea="mine">Apply my idea</button><button type="button" class="btn small" data-idea="plus">Apply my idea + the AI's additions</button></div>
+        <p class="stat-line">Applying asks for a second click on <b>Confirm</b> and lists exactly what will change. You can undo it from the decision ledger.</p>
+      </div></div>
+
+      <div class="card wide"><div class="card-head"><h2 class="card-title">Agent thinking</h2><span class="chip mono" id="agLogN">0</span></div><div class="card-body">
+        <div class="twin-bar" style="margin-top:0"><label class="ag-row" style="margin:0">Show <select class="sel" id="agLogFilter"><option value="all">everything</option><option value="alarm">alarms</option><option value="plan">plans</option><option value="act">actions</option><option value="ask">proposals and denials</option><option value="reflect">checks and lessons</option><option value="watch">hour checks and briefings</option></select></label><button type="button" class="btn small" id="agLogCsv">Copy the decision log as CSV</button></div>
+        <div class="ag-log" id="agLog"></div></div></div>
+
+      <div class="card"><div class="card-head"><h2 class="card-title">Measures in force and how they did</h2></div><div class="card-body"><div class="table-wrap"><table class="runs"><thead><tr><th>Measure</th><th>Since</th><th class="n">Before → now</th><th>Verdict</th><th></th></tr></thead><tbody id="agMeasures"></tbody></table></div></div></div>
+      <div class="card"><div class="card-head"><h2 class="card-title">Lessons learned</h2></div><div class="card-body"><div class="table-wrap"><table class="runs"><thead><tr><th>Action</th><th class="n">Tried</th><th class="n">Avg effect</th><th>Trust</th></tr></thead><tbody id="agLessons"></tbody></table></div><p class="stat-line">Effect = change in the target pressure versus the pre-action trend (negative is good). Lessons are kept in this browser and make the agent try other options when one does not work.</p></div></div>
+
+      <div class="card wide"><div class="card-head"><h2 class="card-title">Decision ledger (the auditor)</h2><span class="chip mono" id="agLedN">0</span></div><div class="card-body">
+        <p class="stat-line" id="agAudit" style="margin-top:0">The auditor checks every hour that each change to the city has a recorded reason: your approval, your own edit or a restart.</p>
+        <div class="twin-bar" style="margin-top:0"><button type="button" class="btn small" id="agLedCsv">Copy the ledger as CSV</button><button type="button" class="btn small" id="agUndoLast" hidden>Undo my last applied idea or policy</button></div>
+        <div class="table-wrap"><table class="runs"><thead><tr><th class="n">#</th><th>When</th><th>Decision</th><th>What</th><th>Details</th></tr></thead><tbody id="agLedger"></tbody></table></div>
+      </div></div>
+
+      <div class="card wide"><div class="card-head"><h2 class="card-title">Test the agent (same-seed experiments)</h2><span class="chip mono" id="agTestChip">–</span></div><div class="card-body">
+        <p class="stat-line">These run fresh copies of your city in the background with your current settings. Nothing on screen changes. In the copies a simulated you approves every proposal after one hour. For many seeds, scenarios and real statistics use the <b>Paper Lab</b> tab.</p>
+        <label class="ag-row">Length <select class="sel" id="agDays"><option value="2">2 days (fast)</option><option value="3" selected>3 days</option><option value="5">5 days</option></select></label>
+        <div class="twin-bar"><button type="button" class="btn small" id="agTestBtn">Agent (you approve everything) vs doing nothing</button><button type="button" class="btn small" id="agSearchBtn">Search the best policy</button><button type="button" class="btn small" id="agCancelBtn" hidden>Cancel</button></div>
+        <div class="ag-prog" hidden id="agProgWrap"><i id="agProg"></i></div>
+        <p class="stat-line" id="agTestMsg"></p>
+        <div class="table-wrap"><table class="runs"><thead><tr><th>Run</th><th class="n">Harm</th><th class="n">Burden</th><th class="n">Peak infected</th><th class="n">Deaths</th><th class="n">Peak AQI</th><th class="n">Accidents</th></tr></thead><tbody id="agTestBody"></tbody></table></div>
+        <div class="twin-bar" id="agApplyBar" hidden><button type="button" class="btn small" id="agApplyBest">Apply the best policy to the live city</button><span class="stat-line" id="agApplyMsg"></span></div>
+      </div></div>
+
+      <div class="card wide"><div class="card-head"><h2 class="card-title">Your city from a CSV</h2><span class="chip mono" id="agCsvChip">no file</span></div><div class="card-body">
+        <p class="stat-line">Upload a CSV about your own city and the model is set up to match it. Two kinds of file work: a <b>city profile</b> (rows of <code>parameter,value</code>, or one header row plus one data row) and an <b>observed series</b> (a day or date column plus columns such as <code>aqi</code>, <code>temp_c</code>, <code>infectious_pct</code>, <code>power_kw</code>). Nothing leaves your device.</p>
+        <div class="twin-bar"><input type="file" id="agFile" accept=".csv,.txt,text/csv" aria-label="Choose a CSV file"><button type="button" class="btn small" id="agSample">Load sample city</button><button type="button" class="btn small" id="agTemplate">Show the template</button></div>
+        <textarea class="csv-box" id="agCsvText" aria-label="CSV text" placeholder="Or paste CSV here, then press Read CSV (up to 2 MB, 20,000 rows)" style="min-height:110px"></textarea>
+        <div class="twin-bar"><button type="button" class="btn small" id="agRead">Read CSV</button><button type="button" class="btn small" id="agApplyCity" hidden>Apply city profile and restart</button></div>
+        <p class="stat-line" id="agCsvMsg"></p>
+        <div class="table-wrap"><table class="runs" id="agMapTable" hidden><thead><tr><th>Your column</th><th>Model setting</th><th class="n">Value used</th><th>Note</th></tr></thead><tbody id="agMapBody"></tbody></table></div>
+        <div id="agFit" hidden>
+          <h3 class="eyebrow" style="margin-top:14px">Model versus your observed data</h3>
+          <label class="ag-row">Series <select class="sel" id="agSeries"></select></label>
+          <canvas class="tchart" id="agFitChart" aria-label="Observed versus model"></canvas>
+          <div class="table-wrap"><table class="runs"><thead><tr><th>Series</th><th class="n">Days compared</th><th class="n">Mean abs. error</th><th class="n">Bias</th><th class="n">Correlation</th></tr></thead><tbody id="agFitBody"></tbody></table></div>
+          <div class="twin-bar"><button type="button" class="btn small" id="agCalib">Auto-calibrate to this data</button><button type="button" class="btn small" id="agCalibApply" hidden>Apply calibration and restart</button><button type="button" class="btn small" id="agCalibCancel" hidden>Cancel</button></div>
+          <div class="ag-prog" hidden id="agCalWrap"><i id="agCalProg"></i></div>
+          <p class="stat-line" id="agCalMsg"></p>
+        </div>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<section id="tab-gov" role="tabpanel" aria-labelledby="tabbtn-gov" hidden>
+  <div class="twin gv">
+    <div class="twin-intro card"><div class="card-body">
+      <div class="eyebrow">City government · v17</div>
+      <p class="lede">The city now has a <b>treasury, a budget, prices, households, a birth centre and natural births and deaths</b>. Every measure the agents propose has a <b>price tag</b>, and the treasury must be able to pay it. This page only <b>shows</b> the books; money moves only when you approve something on the <b>AI Agent</b> tab (or change a slider yourself).</p>
+      <p class="stat-line"><b>Honest label:</b> the money figures are <b>illustrative assumptions</b>, not real data for any real city. Each simulated person stands for <span id="gvScale">400</span> real people so the figures look like a city of about <span id="gvCity">50,000</span>. Births and natural deaths run on a <b>time-lapse</b> (<span id="gvLapse">×10</span> faster than real life) so a few simulated weeks show them. Change the numbers in the sliders (Simulation tab, "Government &amp; economy") or load your own city's figures when you have them.</p>
+      <p class="ag-result" id="gvOff" hidden>The economy layer is switched off (Simulation tab → Government &amp; economy → "Economy and government on", then restart).</p>
+    </div></div>
+    <div class="twin-grid">
+      <div class="card"><div class="card-head"><h2 class="card-title">Treasury</h2><span class="chip mono" id="gvRunway">–</span></div><div class="card-body" id="gvTreasury"></div></div>
+      <div class="card"><div class="card-head"><h2 class="card-title">Treasury and trust over time</h2></div><div class="card-body"><canvas id="gvChart" style="width:100%;height:130px"></canvas><p class="stat-line" id="gvChartKey">Cyan: treasury (Rs million). Orange: public trust (%).</p></div></div>
+      <div class="card"><div class="card-head"><h2 class="card-title">Income today</h2></div><div class="card-body" id="gvIncome"></div></div>
+      <div class="card"><div class="card-head"><h2 class="card-title">Budget by department</h2><span class="chip mono">plan vs spent</span></div><div class="card-body" id="gvDepts"></div></div>
+      <div class="card"><div class="card-head"><h2 class="card-title">Prices</h2></div><div class="card-body"><div class="table-wrap"><table class="runs"><thead><tr><th>Item</th><th class="n">Now</th><th class="n">Normal</th><th>Why</th></tr></thead><tbody id="gvPrices"></tbody></table></div></div></div>
+      <div class="card"><div class="card-head"><h2 class="card-title">Households</h2></div><div class="card-body" id="gvHouse"></div></div>
+      <div class="card"><div class="card-head"><h2 class="card-title">Birth centre</h2><span class="chip mono" id="gvBirthChip">–</span></div><div class="card-body" id="gvBirth"></div></div>
+      <div class="card"><div class="card-head"><h2 class="card-title">People</h2></div><div class="card-body" id="gvPeople"></div></div>
+      <div class="card wide"><div class="card-head"><h2 class="card-title">Government news and capital spending</h2></div><div class="card-body" id="gvNews"></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="tab-paper" role="tabpanel" aria-labelledby="tabbtn-paper" hidden>
+  <div class="twin ag">
+    <div class="twin-intro card"><div class="card-body">
+      <div class="eyebrow">Paper Lab · v16</div>
+      <p class="lede">Run a <b>repeatable experiment</b> on the simulated city (several scenarios, several controllers, many seeds), get <b>real statistics</b> (mean ± SD, paired differences, 95% confidence intervals, effect sizes, Holm-adjusted p-values), and turn the results into a <b>research-paper draft</b> whose tables and numbers come straight from your runs. Download the raw results so anyone can check them.</p>
+      <p class="stat-line"><b>Honest label:</b> the generator writes the structure, the method description, the tables and the plain-language reading of the numbers. It does <b>not</b> make the study valid or publishable by itself. A draft is a starting point for you and your supervisor: the model still needs checking against real data, and every claim and reference must be checked by a person before any submission.</p>
+    </div></div>
+
+    <div class="twin-grid">
+      <div class="card"><div class="card-head"><h2 class="card-title">1. Design the experiment</h2><span class="chip mono" id="plChip">no results</span></div><div class="card-body">
+        <h3 class="eyebrow" style="margin:0 0 6px">Scenarios</h3><div id="plScen" class="pl-checks"></div>
+        <h3 class="eyebrow" style="margin:10px 0 6px">Controllers</h3><div id="plCtl" class="pl-checks"></div>
+        <label class="ag-row" style="margin-top:10px">Seeds <select class="sel" id="plSeeds"><option value="3">3 (quick check)</option><option value="5" selected>5</option><option value="10">10</option><option value="20">20 (paper quality)</option></select></label>
+        <label class="ag-row">Days per run <select class="sel" id="plDays"><option value="2">2</option><option value="3" selected>3</option><option value="5">5</option></select></label>
+        <label class="ag-row">First seed <input class="fld" type="number" id="plSeed0" value="201" min="1" max="99999" style="width:90px"></label>
+        <p class="stat-line" id="plEta">Pick at least "No intervention" and "Mayor with consent".</p>
+        <div class="twin-bar"><button type="button" class="btn small" id="plRun">Run the experiment</button><button type="button" class="btn small" id="plCancel" hidden>Cancel</button></div>
+        <div class="ag-prog" hidden id="plProgWrap"><i id="plProg"></i></div>
+        <p class="stat-line" id="plMsg"></p>
+        <p class="stat-line">Runs happen in this browser tab, one after another, so a big experiment takes minutes. The command-line benchmark in the repository (<code>bench/bench.js</code>) runs the same code faster and was used for the results in the project paper.</p>
+      </div></div>
+
+      <div class="card"><div class="card-head"><h2 class="card-title">2. Results</h2></div><div class="card-body">
+        <div class="table-wrap"><table class="runs"><thead><tr><th>Controller</th><th class="n">Cost</th><th class="n">Harm</th><th class="n">Burden</th><th class="n">Peak infected</th><th class="n">Deaths</th></tr></thead><tbody id="plSummary"></tbody></table></div>
+        <p class="stat-line" id="plRead">Pooled over all scenarios and seeds. Cost = harm + 0.4 × burden (points, lower is better).</p>
+        <div class="twin-bar"><button type="button" class="btn small" id="plCopyJson">Copy raw results (JSON)</button><button type="button" class="btn small" id="plCopyCsv">Copy raw results (CSV)</button></div>
+      </div></div>
+
+      <div class="card wide"><div class="card-head"><h2 class="card-title">3. Build the paper draft</h2><span class="chip mono" id="plPaperChip">–</span></div><div class="card-body">
+        <label class="ag-row">Title <input class="fld" type="text" id="plTitle" style="flex:1 1 280px" placeholder="Leave empty for the default title"></label>
+        <label class="ag-row">Author <input class="fld" type="text" id="plAuthor" style="flex:1 1 220px" placeholder="Your name"></label>
+        <label class="ag-row">Affiliation <input class="fld" type="text" id="plAff" style="flex:1 1 280px" placeholder="Department, university"></label>
+        <label class="ag-row">Email <input class="fld" type="text" id="plMail" style="flex:1 1 220px" placeholder="you@university.edu"></label>
+        <div class="twin-bar"><button type="button" class="btn small" id="plBuild">Build the paper</button><button type="button" class="btn small" id="plCopyMd" disabled>Copy as Markdown</button><button type="button" class="btn small" id="plPrint" disabled>Print or save as PDF</button></div>
+        <p class="stat-line" id="plPaperMsg"></p>
+        <div class="paper-view" id="plPreview" aria-live="polite"></div>
+      </div></div>
+
+      <div class="card wide"><div class="card-head"><h2 class="card-title">Can this be published? An honest answer</h2></div><div class="card-body pl-honest">
+        <p><b>What it can do.</b> It produces a complete, reproducible <i>draft</i>: introduction, method description (ODD-style), the agent's equations, experiment design, results tables with confidence intervals, limitations, an AI-assistance statement and a reference list whose entries were checked against the publisher or archive pages. Anyone with the repository can rerun the benchmark and get the same numbers.</p>
+        <p><b>What it cannot do.</b> It cannot promise acceptance, and it cannot supply what reviewers will look for first:</p>
+        <ul>
+          <li><b>Validation against a real city.</b> Right now the city is synthetic. Use the CSV loader on the AI Agent tab with real air-quality, temperature or case data, report how well the model matches (error, bias, correlation), and say plainly where it does not.</li>
+          <li><b>Evidence that the agent is better than strong alternatives</b>, not only than doing nothing. The benchmark already includes a fixed pack and the city's own autopilot; add more if a reviewer would expect them.</li>
+          <li><b>Sensitivity analysis</b> of the settings you chose yourself: the burden weight (0.4), each option's expected effect and burden. Report what changes when you vary them.</li>
+          <li><b>Related work in depth.</b> The generated reference list is short on purpose. Add the literature you have actually read, including your own brick-kiln papers.</li>
+        </ul>
+        <p><b>Realistic routes</b> (check each venue's current rules before you submit): put the code, data and paper on a repository that gives a DOI (for example Zenodo through GitHub); post a preprint (some servers need an endorsement or affiliation for first-time authors); ask your supervisor about a student or workshop track or a simulation-methods journal. Peer-reviewed publication is decided by reviewers, so treat this tool as the way to build a solid, honest draft, not as a guarantee.</p>
+        <p><b>Rules to follow.</b> Venues expect you to disclose AI assistance and to take responsibility for every claim. An AI system cannot be an author. Never keep a number or a reference you have not checked.</p>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<section id="tab-research" role="tabpanel" aria-labelledby="tabbtn-research" hidden>
+  <article class="research article">
+    <div class="article-hero">
+      <div class="eyebrow">Research notes</div>
+      <h1>From a research specification to a running city</h1>
+      <p class="lede">This tab records how the <b>Master Build Specification: Smart City Digital Twin using Agent-Based Modelling</b> was turned into Outbreak Lab v5, what each subsystem does, and, just as important, what was <b>not</b> built. Every claim below can be checked in the app: the Smart city tab shows the numbers and the validation checks.</p>
+    </div>
+
+    <section>
+      <h2>1. The design in one paragraph</h2>
+      <p>People (agents) live in a 1 km &times; 0.6 km city. Their routines (home, work, school, five daily prayers, shopping at the mart or the sabzi mandi, funerals) put them in shared places, where an infection can pass. The same city also has <b>infrastructure</b>: a power grid with solar and a battery, a water network, rubbish bins and trucks, buses, ambulances, fire engines, repair crews and sensors. The two layers are coupled, so a power cut does not stay a power cut: signals flash, crashes rise, pumps stop, water runs short, hygiene suffers, and homes get more infections.</p>
+      <div class="formula">power cut &rarr; signals flash &amp; lights off &rarr; more crashes &rarr; more ambulances, more injured<br>power cut &rarr; pumps stop &rarr; water shortage &rarr; hygiene stress &rarr; home infection &times; (1 + hygiene effect &times; shortage)<br>strike &rarr; bins overflow &rarr; burning (smoke) + blocked drains (flood) + sanitation effect &rarr; infection<br>sensor failure &rarr; the smog school-closure rule is wrong or blind &rarr; schools open in smog (or close for nothing)</div>
+    </section>
+
+    <section>
+      <h2>2. What the specification asked for, and what v5 does</h2>
+      <div class="table-wrap"><table class="data-table">
+        <thead><tr><th>Specification section</th><th>Status</th><th>What exists in v5</th></tr></thead>
+        <tbody>
+          <tr><td>2. Everything controllable; central registry</td><td><span class="status-part">Partial</span></td><td>One registry (the list of settings in <code>app.js</code>, with defaults in <code>model.js</code>) generates the controls, the registry table, the export/import and the audit log. Each setting has a name, description, type, default, range, unit text, when it applies, and the role that may change it. Values are clamped on import. <b>Roles are a client-side switch, not real authentication.</b></td></tr>
+          <tr><td>3. Python, Mesa, FastAPI, React, Leaflet, SQLite, Docker</td><td><span class="status-no">Not built (documented alternative)</span></td><td>The whole project is JavaScript in one file that opens offline in any browser. No server, no database, no Leaflet map: the city is drawn on a canvas. This was chosen so the model can be run in class without installing anything. The model code does not depend on the browser, and it runs headless in Node for tests.</td></tr>
+          <tr><td>4. Layered architecture, deterministic update cycle</td><td><span class="status-part">Partial</span></td><td>Model (<code>model.js</code>) and interface (<code>app.js</code>) are separate. A seeded random generator makes runs repeatable. The update cycle is listed in section 3 below. There is no API layer, because there is no backend.</td></tr>
+          <tr><td>5. City geography</td><td><span class="status-part">Partial</span></td><td>Block grid with roads, footpaths, zebra crossings, two highways, airport, motorway, brick kilns, mart, mandi, mosque, graveyard, fire station, waste depot, water works, substation and solar farm. No GIS data or real coordinates.</td></tr>
+          <tr><td>6. Agent types</td><td><span class="status-part">Partial</span></td><td><b>Agents with individual state:</b> citizens, cars, buses, bicycles, ambulances, air ambulance, fire engines, waste trucks, repair crews, hearse, delivery vans, aircraft, police officers, sensors, bins. <b>Aggregate state machines (not individual agents):</b> the power grid, battery, water network, drains, weather.</td></tr>
+          <tr><td>7. Emergent behaviour</td><td><span class="status-impl">Implemented</span></td><td>The couplings in section 1; stress, hygiene, heat and smoke feed into health; crowded buses and shops spread infection.</td></tr>
+          <tr><td>8. Traffic</td><td><span class="status-part">Partial</span></td><td>Signals (cycle and green split adjustable), flashing signals in an outage, queues, red-light running, police, accidents, buses with stops and waiting queues, bicycles, cars pulling over for an ambulance. No congestion-based re-routing, no electric-vehicle charging.</td></tr>
+          <tr><td>9. Energy</td><td><span class="status-impl">Implemented (aggregate)</span></td><td>Section 4. Demand by building class, solar, battery, grid limit, outages, transformer faults, load-shedding policies, diesel for the hospital, tariff and demand response.</td></tr>
+          <tr><td>10. Water</td><td><span class="status-impl">Implemented (aggregate)</span></td><td>Section 5. Tank, pumps (power dependent), leaks, bursts, drought, conservation, price.</td></tr>
+          <tr><td>11. Waste</td><td><span class="status-impl">Implemented</span></td><td>Section 6. One bin per block, trucks, recycling, overflow, burning, sanitation effect.</td></tr>
+          <tr><td>12. Environment and weather</td><td><span class="status-impl">Implemented</span></td><td>Rain, fog, smog, temperature, heatwave, flooding with drainage, air pollution map with wind.</td></tr>
+          <tr><td>13. Citizen services and emergencies</td><td><span class="status-impl">Implemented</span></td><td>Service requests with crews and response times; fires with engines, smoke and injuries; ambulances and air ambulance; funerals.</td></tr>
+          <tr><td>14. Sensors and digital twin</td><td><span class="status-part">Partial</span></td><td>Each sensor keeps four values: actual, measured (noise, bias), received (delay, lost messages) and dashboard (what the control room shows). Failures and a repair request. A rule that decides from the dashboard. No forecasting or anomaly detection.</td></tr>
+          <tr><td>15. Global simulation controls</td><td><span class="status-part">Partial</span></td><td>Start, pause, step hour or day, speed, reset, seed, scenarios. No save/restore of a snapshot and no rewind. Data leaves as CSV or JSON text.</td></tr>
+          <tr><td>16. Parameter and policy editor</td><td><span class="status-part">Partial</span></td><td>Registry table, export/import (Admin), audit log. No versioned scenario files and no scheduled policies.</td></tr>
+          <tr><td>17. Agent explorer and manual override</td><td><span class="status-part">Partial</span></td><td>Inspector for any person. Override: send home, isolate, switch off, switch on. All logged. <b>Spawn or duplicate an agent is not implemented.</b></td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section>
+      <h2>3. The update cycle (what happens in one tick = 1 minute)</h2>
+      <ol>
+        <li>New day (at midnight): weather, random incidents for the day, sensor failures, funerals, flights and everyone&rsquo;s plan for the day.</li>
+        <li>Weather, daylight, temperature and flooding.</li>
+        <li>People follow their plans: walk, cycle, wait at a stop, ride a bus, drive, or stay inside.</li>
+        <li>Traffic: accidents, ambulances (cars pull over), air ambulance, motorway, aircraft, buses, hearse, delivery vans, fire engines, waste trucks, crews.</li>
+        <li>Every 10 minutes: count who is where, then <b>power</b>, <b>water</b>, <b>waste</b> and <b>sensors</b> (in that order, because water pumps need power and waste needs the truck fleet).</li>
+        <li>Services: requests are matched to crews; fires burn and are fought.</li>
+        <li>Air pollution (including smoke from fires and burning rubbish).</li>
+        <li>Every 5 minutes: infection contacts in shared places and in buses.</li>
+        <li>Health states change; hospital admissions; deaths; funerals are queued.</li>
+        <li>Every hour: all history series are recorded (charts and CSV).</li>
+      </ol>
+      <p>Changes to settings made while running are applied before the next tick. Where two agents compete for one thing (one bed, one crew, one road junction) the first in the list, or the nearest, wins; the rule is fixed so the same seed gives the same run.</p>
+    </section>
+
+    <section>
+      <h2>4. Energy</h2>
+      <div class="formula">demand<sub>class</sub> = &Sigma; places (base load &times; occupancy factor &times; heat factor &times; tariff elasticity &times; demand response)<br>supply = solar + grid import (&le; grid limit; 0 in an outage) + battery discharge (&le; 25% of capacity per hour)<br>solar = peak &times; sun elevation &times; cloud &times; dust &times; (1 &minus; 0.004 &times; (T &minus; 25))<br>battery: charge from spare solar, discharge in the evening peak; 92% efficiency each way; always between 0 and capacity<br>priority when short: critical (hospital, signals, pumps) &gt; public &gt; industry &gt; homes &gt; street lights</div>
+      <p><b>Policies:</b> <i>uniform</i> cuts everybody by the same share; <i>critical</i> protects the top classes first; <i>rolling</i> cuts home feeders in turn. The hospital diesel generator starts when supply is short. <b>Check:</b> in = out every step (the residual is tracked, see the Smart city tab).</p>
+      <p><b>Assumptions and limits:</b> loads are averages per building type, not appliances; one grid node; no voltage or frequency; the battery is one lumped unit; tariffs affect only demand, not supply.</p>
+    </section>
+
+    <section>
+      <h2>5. Water</h2>
+      <div class="formula">inflow = treatment inflow &times; (0.45 in drought) &times; power available + rain<br>pumped = min(demand &divide; (1 &minus; leak) + bursts, pump capacity &times; power, tank &divide; dt + inflow)<br>tank<sub>new</sub> = tank + (inflow &minus; pumped) &times; dt &minus; overflow<br>shortage = (demand &minus; delivered) &divide; demand, smoothed</div>
+      <p>Demand follows occupancy, the time of day (morning and evening peaks), heat, conservation and price. <b>Check:</b> the change of the tank equals inflow minus pumped minus overflow. <b>Limits:</b> one tank, no pipe pressure or network topology, bursts are points that only add loss.</p>
+    </section>
+
+    <section>
+      <h2>6. Waste</h2>
+      <p>Every block has one bin. Waste is produced by homes (by who is inside), shops, the mandi, the hospital and factories, and scaled by the waste setting. Trucks collect the fullest bin or follow a fixed round (900 kg per load), unload at the depot, and a share is recycled. A bin over capacity overflows; some of the overflow is burnt (extra PM2.5), clogs the drains (flooding in rain) and raises infection risk at nearby homes.</p>
+      <div class="formula">bins at start + produced = collected + burnt + still in bins</div>
+    </section>
+
+    <section>
+      <h2>7. Sensors and the digital twin</h2>
+      <p>For each sensor, four numbers are kept apart: <b>actual</b> (the true value in the model), <b>measured</b> (actual + noise + calibration bias), <b>received</b> (measured, after the delay and after lost messages) and <b>dashboard</b> (what the control room shows: the average of fresh air readings). A failed sensor stops reporting and a repair request is opened. When &ldquo;rules use sensor readings&rdquo; is on, the smog school-closure rule uses the dashboard value, and the app counts decisions that differ from what the true air quality would have required.</p>
+    </section>
+
+    <section>
+      <h2>8. Daily life added in v5</h2>
+      <ul>
+        <li><b>Five daily prayers</b> at 05:10, 12:45, 16:15, 19:15 and 20:30 (model times). Devout people walk to the mosque; attendance is a setting.</li>
+        <li><b>Funerals:</b> after a death the family and neighbours attend the janazah prayer (13:35) and the burial (14:30) the next day; a hearse drives to the graveyard.</li>
+        <li><b>Shopping</b> at the mart (from 09:00) or the sabzi mandi (05:30&ndash;13:00); a share of mart orders arrive by delivery van.</li>
+        <li><b>Public transport:</b> two bus routes with stops on both sides of the road, waiting queues, buses that obey signals, crowding, and infection on board. <b>Cyclists</b> ride 2.4 times as fast as walkers.</li>
+        <li><b>Ambulance realism:</b> cars pull over for a siren; the model counts how often.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>9. Storms and lightning (v6)</h2>
+      <p>Rain is drawn in three depth layers with splashes, wet roads, puddles and lamp reflections; heavy rain darkens the screen edges and plays a rain sound. In a <b>thunderstorm</b> (heavy rain above 0.82, or the &ldquo;Thunderstorm all day&rdquo; weather) the model throws lightning at the city at the chosen rate (strikes per hour). Each strike lands at a random point; with 12% chance it burns out the transformer of the nearest block (a power cut, and a repair request for the crews) and with 1.5% chance it starts a small fire. Lightning uses its own random stream, so a storm never changes the draws used elsewhere. After a rain on a bright day a rainbow appears. Distant sheet lightning and forked bolts are decoration; the bolts that hit the city are real events and are counted on the Smart city tab.</p>
+    </section>
+
+    <section>
+      <h2>10. Experiments (7 days, 5 random seeds each, averages)</h2>
+      <div class="table-wrap"><table class="data-table" id="expTable"><thead><tr><th>Scenario</th><th>Peak power (kW)</th><th>Unserved (kWh)</th><th>Worst water shortage</th><th>Bin overflows</th><th>Worst flood</th><th>Fires</th><th>Bus rides</th><th>Ever infected</th><th>Wrong smog decisions</th></tr></thead><tbody>
+<tr><td>Baseline</td><td class="m">355</td><td class="m">20</td><td class="m">23%</td><td class="m">0.4</td><td class="m">37%</td><td class="m">0.6</td><td class="m">1402</td><td class="m">2.9%</td><td class="m">0.0</td></tr>
+<tr><td>Heatwave</td><td class="m">488</td><td class="m">525</td><td class="m">54%</td><td class="m">1.4</td><td class="m">54%</td><td class="m">1.2</td><td class="m">1355</td><td class="m">3.4%</td><td class="m">0.0</td></tr>
+<tr><td>Daily blackout (5 h)</td><td class="m">352</td><td class="m">5024</td><td class="m">95%</td><td class="m">1.2</td><td class="m">35%</td><td class="m">0.0</td><td class="m">1396</td><td class="m">3.4%</td><td class="m">0.0</td></tr>
+<tr><td>Drought</td><td class="m">354</td><td class="m">37</td><td class="m">82%</td><td class="m">0.6</td><td class="m">32%</td><td class="m">0.2</td><td class="m">1387</td><td class="m">4.0%</td><td class="m">0.0</td></tr>
+<tr><td>Sanitation strike</td><td class="m">352</td><td class="m">281</td><td class="m">28%</td><td class="m">20.2</td><td class="m">25%</td><td class="m">0.2</td><td class="m">1393</td><td class="m">4.4%</td><td class="m">0.0</td></tr>
+<tr><td>Monsoon flood</td><td class="m">322</td><td class="m">170</td><td class="m">23%</td><td class="m">0.6</td><td class="m">100%</td><td class="m">6.4</td><td class="m">2077</td><td class="m">3.8%</td><td class="m">0.0</td></tr>
+<tr><td>Fire season (1 engine)</td><td class="m">354</td><td class="m">421</td><td class="m">33%</td><td class="m">0.6</td><td class="m">38%</td><td class="m">1.6</td><td class="m">1414</td><td class="m">3.8%</td><td class="m">0.0</td></tr>
+<tr><td>Bus ban</td><td class="m">355</td><td class="m">504</td><td class="m">54%</td><td class="m">0.8</td><td class="m">34%</td><td class="m">0.2</td><td class="m">0</td><td class="m">2.6%</td><td class="m">0.0</td></tr>
+<tr><td>No funerals or prayers</td><td class="m">359</td><td class="m">346</td><td class="m">25%</td><td class="m">0.8</td><td class="m">35%</td><td class="m">0.6</td><td class="m">901</td><td class="m">4.1%</td><td class="m">0.0</td></tr>
+<tr><td>Blind control room (smog rule on)</td><td class="m">346</td><td class="m">234</td><td class="m">40%</td><td class="m">0.6</td><td class="m">0%</td><td class="m">0.0</td><td class="m">1174</td><td class="m">2.0%</td><td class="m">1.2</td></tr>
+      </tbody></table></div>
+      <p class="stat-line">Each row averages 5 seeds (1&ndash;5) over 7 days. Unserved = power demand not met. Worst flood and water shortage are the maximum reached during the week. These numbers come from headless runs of the same <code>model.js</code> (Node). They show direction, not prediction: the city is small, so one run is noisy.</p>
+    </section>
+
+    <section>
+      <h2>11. How it was tested (only what was actually run)</h2>
+      <ul>
+        <li>Headless runs of the model in Node: 3-day baseline; 20-day deadly scenario (deaths led to funerals and burials); heatwave, daily grid outage, drought, sanitation strike, flood, and each incident type injected by hand. All ran without errors.</li>
+        <li>Conservation: the largest residual for energy, water and waste never exceeded 2.6e-8 (floating-point rounding) in any of the 50 runs, and the battery stayed within 0&ndash;100%. The Smart city tab shows these live.</li>
+        <li>Speed: about 0.2&ndash;0.4 ms per tick in Node.</li>
+        <li>Lightning: a 3-day headless storm run produced strikes, transformer faults and fires, with energy residual about 1e-14. Counts depend on the strike rate setting.</li>
+        <li>Browser: the page was opened in a real browser (Chromium via Playwright) on desktop and phone sizes and checked for script errors; screenshots are in the project.</li>
+        <li><b>Not done:</b> no pytest, no frontend unit tests, no end-to-end test suite, no Docker build. The model has not been calibrated against real city data.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>12. Known limitations</h2>
+      <ul>
+        <li>A small synthetic city (500 people); results show mechanisms, not forecasts for a real city.</li>
+        <li>Power and water are lumped (no network); sensors are few.</li>
+        <li>The role system is a convenience for demonstrations, not security.</li>
+        <li>Prayer and funeral times are fixed model times, not computed from the sun or the calendar.</li>
+      </ul>
+    </section>
+  </article>
+<section class="rs"><h3>11. Wi-Fi, emergency alerts and the city scorecard (v7)</h3>
+<p><b>Wi-Fi.</b> Up to ten public access points sit at the hospital, bazaar, mart, airport, mosque, university, government offices, a school, a park and an office tower. Each has a range, a capacity (Mbit/s) and a battery. People with a phone (about 90% of adults, 55% of children, 45% of elders, fixed by id) connect to the nearest access point in range. Demand follows the time of day; when demand is above capacity, link quality drops to capacity/demand. In a power cut an access point runs on its battery and then goes dark. Access points also break at random for a few hours (<i>Access-point failures</i>), or you can switch one off with the Incident tool.</p>
+<p><b>Why it matters for the twin.</b> A sensor in a Wi-Fi dead zone uses a weaker mobile link (95% of readings arrive); a sensor under a working access point loses fewer readings (85&ndash;100%, by link quality). So a Wi-Fi failure shows up as more missing readings and a wider gap between the true city and the control-room dashboard.</p>
+<p><b>Emergency alert.</b> The button sends a message to every phone. Everyone with a phone counts as reached; people who are out (not at home, not in a hospital) go home with probability <i>alert compliance</i>. It is logged in the audit trail and needs the Operator role.</p>
+<p><b>Scorecard.</b> Seven 0&ndash;100 scores, averaged: power reliability (share of demand served), water security (share of demand met), clean streets (share of bins not overflowing), connectivity (share of phones online weighted by link quality), air quality (100 &minus; AQI/3.5), road &amp; fire safety (100 &minus; 3&times;accidents/day &minus; 8&times;fires/day) and public health (falls with the share exposed or infectious and with deaths). These are simple teaching rules, not official indices.</p>
+<p><b>Limits.</b> Network traffic is aggregate (no packets or routing); phone ownership is a fixed hash; uncovered sensors use a flat mobile-link success rate. <b>The research paper from your shared link could not be opened by me, so it has not been added yet.</b> Paste its text or attach the file and I will add it here and align the model.</p></section>
+<section class="rs"><h3>12. Kilns, seasons and smog: brief results (v8)</h3>
+<p><b>What was built.</b> A simulated satellite passes over the city every few hours. It looks at the 8 kiln sites, decides which ones are burning (a hot spot) and measures how much of the city is under unhealthy smoke. Fog and rain hide kilns from it, so it makes more mistakes. This is a <b>simulated</b> satellite, not real imagery. Four seasons change temperature, fog, rain, wind mixing, daylight, electricity use and how many people go out. Brick kilns can be shut in winter, by policy or one by one by the user.</p>
+<p><b>Method.</b> Each case was run for 7 days with 3 random seeds, all other settings at their defaults. Numbers are averages of the hourly air quality index (AQI) and the highest hourly value.</p>
+<div class="table-wrap"><table class="runs"><thead><tr><th>Case</th><th class="n">Mean AQI</th><th class="n">Peak AQI</th><th class="n">Satellite wrong calls</th></tr></thead><tbody>
+<tr><td>Autumn, 4 kilns (reference)</td><td class="n">142</td><td class="n">172</td><td class="n">14%</td></tr>
+<tr><td>Autumn, 8 kilns</td><td class="n">164</td><td class="n">210</td><td class="n">19%</td></tr>
+<tr><td>Autumn, clean zig-zag kilns</td><td class="n">101</td><td class="n">135</td><td class="n">14%</td></tr>
+<tr><td>Spring, 4 kilns</td><td class="n">130</td><td class="n">158</td><td class="n">12%</td></tr>
+<tr><td>Summer, 4 kilns</td><td class="n">119</td><td class="n">142</td><td class="n">12%</td></tr>
+<tr><td>Winter, 4 kilns burning</td><td class="n">164</td><td class="n">204</td><td class="n">17%</td></tr>
+<tr><td>Winter, 4 kilns, winter shutdown</td><td class="n">83</td><td class="n">101</td><td class="n">9%</td></tr>
+<tr><td>Winter, 8 kilns burning</td><td class="n">187</td><td class="n">268</td><td class="n">24%</td></tr>
+<tr><td>Winter, 8 kilns, winter shutdown</td><td class="n">82</td><td class="n">99</td><td class="n">9%</td></tr>
+<tr><td>Winter fog, 4 kilns burning</td><td class="n">261</td><td class="n">323</td><td class="n">33%</td></tr>
+</tbody></table></div>
+<h4>What we got</h4>
+<ul>
+<li>A winter shutdown cut mean AQI by about 49% with 4 kilns (164 to 83) and 56% with 8 kilns (187 to 82). The peak fell from 268 to 99 with 8 kilns.</li>
+<li>Winter is the worst season for smog if kilns keep burning: the air is stagnant, so the same smoke gives a higher AQI than in spring or summer (130 and 119). Winter fog made it hazardous (mean 261, peak 323).</li>
+<li>Clean zig-zag kilns in autumn cut mean AQI by about 29% (142 to 101).</li>
+<li>The satellite is right most of the time in clear air (91% in winter with the kilns shut) and worst in fog (67%). Fog is exactly when smog is worst, so the tool fails when it is most needed.</li>
+<li>At city scale, construction dust (141 with the site closed, 142 with it open) and 50% electric cars (no visible change in AQI) barely move the average. Electric cars raise average electricity demand by about 8% (271 to 293 kW); summer raises it by about 22% (330 kW).</li>
+<li>Infection counts (12 to 22 people in 7 days) changed in no clear pattern between cases. Three seeds are too few to say that cleaner air changed the epidemic.</li>
+</ul>
+<h4>Good points</h4>
+<ul><li>One model links satellite view, kiln operation, smoke, weather, people and power, so a policy can be tested before it is used.</li><li>Every kiln can be controlled by the user, and every setting is in the registry and the audit log.</li><li>Honest checks: the satellite reports its own false alarms and misses against the known truth.</li></ul>
+<h4>Drawbacks</h4>
+<ul><li>The satellite is simulated. Detection odds are assumptions (accuracy slider, fog and rain reduce it), not measured values.</li><li>Smoke is a simple grid model (wind, mixing, rain wash-out). It is not a chemistry or weather model, and real dust, crop burning and cross-border smoke are not included.</li><li>Only 8 fixed kiln sites; kiln size, fuel and age are not modelled.</li><li>3 seeds and 7-day runs are enough for large effects (kilns) but not for small ones (health, dust).</li><li>Seasons are a four-step table, not real climate data for one city.</li></ul>
+<h4>What we can update next</h4>
+<ul><li>Replace the assumed satellite odds with real detections from a trained image classifier (for example on public satellite tiles) and compare.</li><li>Add real weather and air-quality data for one city and calibrate the model against it.</li><li>Let kilns differ (size, fuel, technology) and add a licence or fine policy.</li><li>Run 30 or more seeds per case and report ranges.</li><li>Add crop-residue burning and a heating-fuel season in winter.</li></ul>
+<h4>Recommendations</h4>
+<ul><li>Shut kilns for the winter smog months: it is the single biggest effect found here, and larger than anything else tested.</li><li>Move kilns to clean zig-zag technology; it helps in every season, not only winter.</li><li>Do not rely on one optical satellite alone: combine it with ground sensors and thermal imaging, because fog hides kilns.</li><li>Use a smog rule that stops construction and closes schools when AQI is over 200, and spray water on building sites.</li><li>Check the satellite regularly against the ground truth and publish its error rate.</li></ul>
+<p><b>Also new in v8.</b> Construction site (a crane builds a tower floor by floor; dust, diesel power, stops in rain or smog if you choose), Sky Tower (floors set by the user, shadow, lift wait, power), Funland amusement park (rides, evening crowds, closes in bad weather, adds infection risk and power load) and electric cars. Each has controls in the "Seasons &amp; kilns" and "New city features" groups. Lift wait is a simple rule (0.4 + people &divide; (floors &times; 4) minutes, 1.5&times; in rush hour), not a lift-traffic model.</p></section>
+<section class="rs"><h3>13. Your two research papers, and how the model uses them (v9)</h3>
+<p><b>Download:</b> <a download="Brick_Kiln_Activity_Remote_Sensing.docx" href="papers/Brick_Kiln_Activity_Remote_Sensing.docx">Paper 1: Per-kiln, per-date firing activity detection (.docx)</a> &middot; <a download="Brick_Kiln_Classification_Literature_Review.docx" href="papers/Brick_Kiln_Classification_Literature_Review.docx">Paper 2: Cross-border kiln technology recognition, literature review and roadmap (.docx)</a>. Both files are also in the <code>papers/</code> folder of the GitHub zip.</p>
+<h4>Paper 1: Per-kiln per-date brick kiln firing activity detection from satellite remote sensing</h4>
+<ul>
+<li><b>Problem.</b> More than 100,000 kilns across South Asia cause 8&ndash;16% of regional fine particles (30&ndash;91% of winter pollution in some airsheds). Maps of where kilns are exist; knowing whether one particular kiln is <i>firing today</i> is the unsolved part.</li>
+<li><b>Physics result.</b> Fixed-chimney and zigzag kilns hide an 800&ndash;950 &deg;C fire under an ash roof at 70&ndash;90 &deg;C, and the chimney is only about 3 m<sup>2</sup>. In a 20 m Sentinel-2 SWIR pixel the heat adds about 0.14% of the sunlit background, far below the sensor noise. Simple SWIR hot-spot thresholds cannot work.</li>
+<li><b>Proposed method.</b> Four signals: (1) Sentinel-2 reflective clues (coal piles, fresh fired bricks, bare trench, smoke-plume pattern); (2) ground heat difference from Landsat 8/9 and ECOSTRESS thermal bands; (3) Sentinel-1 radar yard coherence, which works through fog; (4) daily 3 m PlanetScope images as a teacher for the public sensors. Then calibrate for label shift and send inspectors only for confident calls.</li>
+<li><b>Label noise in Punjab.</b> The authorities reported all kilns as zigzag but the satellite benchmark finds only 14.2% (1,731 of 12,177) are; many "conversions" are an oval kiln with a fan bolted on. Fire-alert points from MODIS/VIIRS are almost all crop-stubble fires, not kilns. Some kilns bank fires by day and fire hard at night.</li>
+<li><b>Planned tests.</b> Baseline 1: SWIR heat only (expected near random, AUC 0.52&ndash;0.58). Baseline 2: coarse tehsil-level trace gas (poor per kiln, F1 under 0.45). Model A optical (F1 about 0.78 in clear sky), Model B plus ground heat (catches night firing), Model C plus radar and calibration (works in fog). These are the paper's <i>expected</i> outcomes, not results yet.</li>
+</ul>
+<h4>Paper 2: Cross-border brick-kiln technology recognition: literature review, novelty audit, roadmap</h4>
+<ul>
+<li><b>Finding.</b> A detector trained on Indian 10 m Sentinel-2 images still finds kilns in Pakistan (class-agnostic mAP50 falls only 1.6 points), but naming the technology collapses: 56% of Pakistani FCBK kilns are called zigzag, against 17% in India.</li>
+<li><b>Adaptation trap.</b> Random target samples give no gain because zigzag is rare in Pakistan (about 14% against 47% in India). Class-balanced samples improve separation but the model then reports 37% zigzag instead of 14%.</li>
+<li><b>Novelty verdict.</b> The overall "location transfers, subtype does not" idea is known; the India&ndash;Pakistan label-shift audit and the adaptation catch-22 are new. The main risk is a pure diagnosis paper without a working fix.</li>
+<li><b>Ranked gaps.</b> 1 background soil vs kiln footprint; 2 two-stage design (locator plus calibrated crop classifier); 3 how wrong technology counts distort emission inventories; 4 multispectral cues (NDBKI); 5 logit-adjusted losses; 6 super-resolution; 7 season and operating-phase confusion.</li>
+<li><b>Plan.</b> Three stages: diagnose the shift; adapt actively and calibrate the prior; triage with a confidence gate to build the emission inventory. About 17.5 GPU hours on a T4; target a 6-page IEEE paper.</li>
+</ul>
+<h4>What the model does with each finding</h4>
+<div class="table-wrap"><table class="runs"><thead><tr><th>Paper finding</th><th>In the model</th></tr></thead><tbody>
+<tr><td>SWIR heat is physically undetectable</td><td>Satellite sensors setting "SWIR heat only": detection is close to random.</td></tr>
+<tr><td>Optical, ground heat and radar together</td><td>Settings "optical", "optical + ground heat", "full (+ radar)": each is better, and only radar keeps working in fog.</td></tr>
+<tr><td>Sham zigzag registry (all certified, 14% real)</td><td>Kilns table: "registry says zigzag" against true technology; "Kilns that are truly zigzag" setting (default 14%); zigzag kilns emit 60% less.</td></tr>
+<tr><td>Night warriors</td><td>"Night-firing kilns" setting: they emit little by day and 1.5 times more at night; optical morning passes miss them.</td></tr>
+<tr><td>56% FCBK called zigzag; 37% after balancing; calibration</td><td>Kiln-type classifier setting: as is (56%), balanced (27%, derived), calibrated (17%).</td></tr>
+<tr><td>Wrong technology distorts the emission inventory (gap 3)</td><td>"Smoke inventory error": satellite-based smoke estimate against the true smoke.</td></tr>
+<tr><td>Selective prediction for field dispatch</td><td>Confidence gate, inspectors per dispatch, sealing, and the precision of dispatches (hits over visits).</td></tr>
+<tr><td>Winter ban season</td><td>Four seasons and the winter kiln shutdown.</td></tr>
+<tr><td>Crop-stubble fires mistaken for kilns</td><td>Not modelled yet (see updates).</td></tr>
+</tbody></table></div>
+<h4>Test results in the model (4 days, 3 seeds, 8 kilns, 6-hour passes)</h4>
+<div class="table-wrap"><table class="runs"><thead><tr><th>Satellite sensors</th><th class="n">Wrong calls, clear</th><th class="n">Wrong calls, fog</th></tr></thead><tbody>
+<tr><td>SWIR heat only</td><td class="n">46%</td><td class="n">64%</td></tr><tr><td>Optical</td><td class="n">30%</td><td class="n">67%</td></tr><tr><td>Optical + ground heat</td><td class="n">18%</td><td class="n">55%</td></tr><tr><td>Full (+ radar)</td><td class="n">11%</td><td class="n">18%</td></tr></tbody></table></div>
+<ul><li>Only the radar mode keeps working in fog, as paper 1 argues. Optical alone is as bad as guessing in fog (67% wrong).</li><li>Smoke inventory error (average size at the last pass, 6 seeds, full sensors): kiln-type classifier as is 34%, balanced 21%, calibrated 18%. This is noisy; the order matches paper 2's argument, but the numbers come from assumed error rates.</li><li>Dispatch precision (kilns found burning per visit, optical mode, automatic dispatch): gate 40%: 24 of 65 visits (37%); gate 60% or 80%: 18 of 38 (47%); gate 90%: no calls confident enough, nobody sent. A higher gate wastes fewer trips but misses kilns.</li></ul>
+<h4>Updates from the papers (what to build next)</h4>
+<ul><li>Add crop-stubble fires as false alarms for fire-alert products.</li><li>Replace the assumed sensor odds with a real classifier trained on public tiles (SentinelKilnDB, MuTBriK) and compare the three adaptation options.</li><li>Freeze one kiln registry as the spatial anchor: SentinelKilnDB 12,177 Pakistani kilns, Hamdani et al. about 11,000, EPA Punjab 7,891 IDs.</li><li>Teacher-student distillation from daily 3 m images; class probability matching and logit-adjusted losses for the seasonal label shift.</li><li>Report emission-inventory error for each adaptation option on the Pakistan split (gap 3 needs about 30 CPU minutes).</li><li>Intra-India spatial hold-out as a control for the soil-background explanation.</li></ul>
+<h4>Recommendations (from the papers, tested in the model)</h4>
+<ul><li>Do not use SWIR heat thresholds for kiln activity.</li><li>Use several sensors; radar for fog and smog weeks, when optical fails.</li><li>Do not trust the registry's zigzag label; check the footprint shape.</li><li>Calibrate the technology classifier to the target country's real zigzag share before building emission totals.</li><li>Send inspectors only for confident calls, and inspect at night as well as by day.</li></ul>
+<h4>Honest limits</h4>
+<ul><li>The sensor skill numbers in the model (for example 0.55, 0.80, 0.85, 0.90 in clear air) are my assumptions anchored on the papers' expected outcomes. Paper 1's own ablation matrix is a plan, not a finished result.</li><li>The 27% balanced-adaptation error is derived from the reported 37% predicted share against 14% true, assuming zigzag kilns are recognised; the 15% zigzag-to-FCBK error is assumed.</li><li>The model has 8 kiln sites, not the thousands in the papers, and is not a replacement for the papers' experiments.</li></ul></section>
+<section class="rs"><h3>14. Resources, chronic illness and real-world scale (v11)</h3>
+<p>This version turns Outbreak Lab from an epidemic-only tool into a general city simulator: resources (water, electricity, fuel, fog/visibility) are now independently controllable, several non-epidemic illnesses run alongside the main disease, and a real-world scale panel estimates what a full-size city would need. The city also no longer stops automatically when the outbreak ends &mdash; "Never stop (real-world mode)" keeps every system running so the model can be used to study a normal city, not only an epidemic.</p>
+<h4>Resources &amp; realism</h4>
+<ul>
+<li><b>Water use per person</b> and <b>electricity use</b> scale every home, office and public building's demand independently of each other, so low-flow-fixture or energy-efficiency policies can be tested without touching anything else.</li>
+<li><b>Fuel</b>: petrol price and vehicle efficiency are set directly; the model tracks litres burned and PKR spent, hour by hour, from actual traffic in the simulation (driving agents and moving vehicles).</li>
+<li><b>Fog density</b> is now a baseline haze independent of the rain/fog weather spells, combined with season and night-time. At its default (25%) it barely changes a clear day; at maximum, on a winter night, it produces dense fog on its own.</li>
+<li><b>Real city this represents</b>: a multiplier (1&ndash;50,000&times;) scales the simulated 500-person city's water, electricity, fuel, waste, medicine and infrastructure needs up to a real population size, shown on the Smart city tab's "Real-world scale" card.</li>
+</ul>
+<h4>Chronic conditions &amp; common illness</h4>
+<ul>
+<li>Each adult or elder has a chance of <b>diabetes</b>, <b>high blood pressure</b> or <b>asthma</b>, set by sliders. These raise the chance of serious illness from the main epidemic disease by about 35%, 20% and 25% respectively, on top of age, vaccination, smoking and air quality.</li>
+<li>A separate, ongoing <b>common illness</b> system gives people flu, cough, fever or a sore throat &mdash; unrelated to the epidemic, rising with bad air and in winter, needing medicine but not causing death. A pharmacy stock is drawn down and resupplied daily; running low raises risk slightly for people with a chronic condition.</li>
+</ul>
+<h4>Honest limits</h4>
+<ul>
+<li>The chronic-illness severity multipliers (35%, 20%, 25%) are reasonable assumptions, not fitted to a clinical study.</li>
+<li>Common illness uses one combined rate for flu, cough, fever and sore throat; it does not model transmission between people the way the main epidemic disease does.</li>
+<li>The real-world scale is a straight linear multiplication of the simulated city's resource use. A real city's infrastructure does not scale perfectly linearly (economies and diseconomies of scale exist), so treat the numbers as an order-of-magnitude estimate, not an engineering design figure.</li>
+<li>Fuel use is computed from simulated agents' and vehicles' speeds and counts, not from real traffic counts for any specific city.</li>
+</ul></section>
+<section class="rs"><h3>15. Snow, snow ploughs and flight delays (v12)</h3>
+<p>This version adds an extreme-winter-weather drill and makes bad weather delay the airport, plus a fix so rain and lightning are visible on every device.</p>
+<h4>Motion effects were being silently switched off</h4>
+<ul>
+<li>Falling rain streaks, splash ripples and lightning bolts only ever drew when the browser's <code>prefers-reduced-motion</code> accessibility setting was off. Several phones and browsers turn this on by default (for battery life or motion sensitivity), which hid the rain/lightning animation entirely while the underlying simulation (rain amount, storm state, lightning strikes) was working correctly &mdash; so the effects were "not showing" even though the model was simulating them.</li>
+<li>Fixed with a new <b>"Rain &amp; FX"</b> switch on the map toolbar (next to "Weather"). It starts matching the device's own accessibility setting (so it still respects that choice by default) but can be switched on in-app, overriding it, so the effects are always something the person using the app can choose to see.</li>
+</ul>
+<h4>Snow</h4>
+<ul>
+<li>A new <b>Weather</b> option, "Snowfall all day", adds falling snow, a whitening tint on the roads, slower traffic and a lower temperature. Snow builds up gradually while it falls and melts slowly once it stops (faster while <b>Snow ploughs</b> are dispatched).</li>
+<li><b>Honest limit:</b> this city's own winters (modelled on a Punjab-style plains climate, with brick kilns and a 13&deg;C winter temperature drop) do not realistically get snow. Snow is offered as a deliberate extreme-weather scenario &mdash; useful for demonstrating how a smart city's traffic, airport and road-clearing systems would respond to a winter storm &mdash; not as a claim that this specific city sees snowfall.</li>
+</ul>
+<h4>Snow ploughs</h4>
+<ul>
+<li>When snow settles past a threshold (and the toggle is on), plough trucks leave the depot and circulate the two main roads, visibly clearing a path and roughly tripling how fast accumulated snow melts away compared with leaving it alone.</li>
+</ul>
+<h4>Flight delays</h4>
+<ul>
+<li>Each day's flight schedule now rolls a weather-dependent delay chance per flight (worst in explicit storm/snow/fog modes, moderate for a rain or fog spell under "real weather", small otherwise). A delayed flight pushes its arrival and departure times back by 20&ndash;95 minutes; the Smart city tab's "Flight delays" line and the City TV news both report it.</li>
+<li><b>Honest limit:</b> this is a simplified weather-delay model (a single probability roll per flight), not a real air-traffic-control simulation &mdash; it does not model air-traffic flow restrictions, connecting flights or multi-airport cascading delays.</li>
+</ul></section>
+<section class="rs"><h3>16. Fixing the "Admin" wall, easier controls, reports, parking (v13)</h3>
+<p>The "requires Admin permission" message when raising Population was a real usability problem, not a misunderstanding: the control room has a Viewer/Operator/Admin role system (built to demonstrate access control in a smart-city system), and it defaulted to Operator, which cannot change settings that need a restart (Population among them). The default is now Admin, so nothing is locked out of the box; switch the role dropdown to Viewer or Operator if you want to show the access-control idea itself working.</p>
+<p>Every slider now has &minus; / + buttons so values can be nudged precisely without dragging (useful on a phone). The Experiments card has a new "Download full report (CSV)" button that exports every hourly series the model tracks as a real file. A new "Parking" line on the Smart city tab reports cars parked in public places vs on the road vs still at home, computed from the parking spots the model already tracks at non-home destinations &mdash; it is not a capacity-limited parking system (no "lot full" state), just an honest count.</p>
+<h4>A note on the bigger request</h4>
+<p>A separate request asked for this to become a full enterprise smart-city platform: React/Next.js front end, a FastAPI or Node backend, PostgreSQL and time-series storage, MQTT device gateways, 18 modules (transportation, parking, lighting, energy, water, waste, environment, safety, buildings, public transport, healthcare, administration, parks, roads, agriculture, connectivity, disaster management, AI analytics), role-based auth enforced on a real backend, and CI tests &mdash; essentially a different, much larger piece of software with a server, a database and a login system.</p>
+<p>That is a legitimate thing to build, but it is not this project: Outbreak Lab is deliberately a single offline HTML file with no backend, no accounts and no server, so it can be opened from a phone or a USB stick with nothing installed and presented to a professor without a deployment step. Rebuilding it as a multi-service web application would mean abandoning that, for a scope (weeks of backend and infrastructure work) well beyond what one more iteration of this tool can honestly deliver. Instead, this version pulled in the parts of that request that fit the existing single-file design and were honestly achievable in one pass: fixing the access-control default that was blocking real use, adding reports/CSV export (the spec's "Reports and Analytics" idea), and adding a parking metric (the spec's "Smart Parking" idea) using data the model already had. The satellite/kiln system, Wi-Fi network, traffic cameras and e-challan, City TV news, and the live AI analyst already cover a good slice of that spec's IoT-dashboard, security-camera, automation-rules and AI-analytics ideas in a form that fits a single file.</p>
+<h4>Flaws considered this round</h4>
+<ul>
+<li>Checked whether other restart-needed settings were silently blocked the same way as Population &mdash; they were, by the same default-role issue, and are fixed by the same change.</li>
+<li>Checked that the parking count cannot go negative or double-count a household's single car between "driving" and "parked" &mdash; the driving figure is clamped at zero when the two don't reconcile exactly (a car can be between states for a tick or two).</li>
+<li>Checked the new &minus;/+ buttons respect each slider's own min, max and step, and cannot push a value out of range.</li>
+</ul></section>
+<section class="rs"><h3>17. The agentic AI mayor and loading your own city (v14)</h3>
+<p><b>What the agent is.</b> A goal-driven planning agent. Every few simulated hours it observes six pressures (health, air, roads, power, water, connectivity, each 0 to 100%), picks the actions from a toolbox of 17 real city controls that best serve the chosen goal, acts or asks you first, and 12 hours later checks whether the targeted pressure did better than its pre-action trend. Measures that look harmful are lifted, and each action's track record (kept in this browser) raises or lowers how much the agent trusts it next time. Big decisions (closing schools, banning gatherings, ordering clean kilns) can require your approval, and "advise only" mode never acts.</p>
+<p><b>Honest limits.</b> It is rule-based, not a language model: it does not understand text and its urgency rules and thresholds are my design choices, not fitted values. The "did it help?" check is a heuristic against a trend line, and weather or the epidemic's own course can fool it; one action's lesson mixes in everything else that changed. The Test panel is the fairer check: it reruns the same city and seed with and without the agent. Even so it is one random seed, so small differences are noise. (In v14 the same seed could give slightly different results, because bus-stop queues were shared between simulations; v15 fixes this, so the same seed and settings now always give the same result.) "Search the best policy" tests each package one at a time from Monday 06:00 on a fresh city, not from the current state, so combinations and timing may behave differently.</p>
+<p><b>Your city from a CSV.</b> A city profile (parameter,value rows, or a header row plus one data row) is matched to model settings by name (population, beds per 1000, kilns, average temperature, rainy days, fog, smokers, flights, speed limit and others), limited to each setting's range, and shown in a table before anything changes. A population above 1,000 is modelled as a 500-person slice with the real-world scale set to match. Unknown columns are ignored and listed. An observed series (day or date plus aqi, temp_c, infectious_pct or power_kw) is compared with the model's daily averages (mean absolute error, bias, correlation). Auto-calibrate sets the base temperature from the observed mean and searches kiln count and smoke levels with short background runs to reduce the AQI error.</p>
+<p><b>What this is not.</b> Matching a few averages does not make the model a validated copy of your city: the people, roads, buildings and behaviour are still the model's own synthetic ones, and calibration on 3 to 5 short runs is a starting point. Real data you upload is used only in your browser. The sample files are invented numbers for a demonstration.</p>
+</section>
+
+<section class="rs"><h3>18. The v15 mayor: watching every minute, alternatives, deny list, your ideas, Paper Lab</h3>
+<p><b>What changed and why.</b> v14's agent decided every few hours from simple thresholds, so it often repeated the same suggestion. v15 senses six pressures <b>every simulated minute</b>, smooths them and tracks their trend, and plans at once when an alarm fires (air-quality forecast passes 200 or 300, infections pass 1, 5 or 15%, hospital 80% or full, a death, an outage, demand near the grid limit, low water, storm, snow, fog, three accidents in two hours). For each problem it finds the likely <b>cause</b> (estimated shares of smoke from kilns, construction dust, factories and traffic; whether fog or low wind traps the air; how many people each case infects) and ranks <b>several different options</b> from a toolbox of about 50 controls, scoring each as expected benefit minus the burden it puts on people. Options already in force overlap with new ones, so each new option is credited with less. Options it has tried before are trusted more or less according to what happened, and rarely tried ones get a small exploration bonus, so it moves on to other options when one does not work.</p>
+<p><b>Human in the loop.</b> Proposals show the best option and up to three alternatives. <b>Deny</b> puts an option on a deny list for 1 to 5 simulated days (default 2). It is offered again after that time, or immediately as a new request only if its problem becomes an <b>emergency</b>; it is never applied without your approval in that case. A switch lets the agent act at once in an emergency, but never on something you denied. Early warnings estimate when beds, air quality, power or water will cross a limit if the trend continues.</p>
+<p><b>Your own idea.</b> Type what you would do in plain words (English or Roman Urdu keywords). Keyword rules turn it into city settings, then the agent checks it: is the problem area under pressure now, how much burden does it add, which serious problems does it leave untouched, which complementary measures are missing. "Test it" runs fresh copies of the city (3 seeds) with the current settings, with your idea, and with your idea plus the agent's additions, and reports harm, burden and total cost. It only understands the topics listed in the app; anything else is reported as not understood rather than guessed.</p>
+<p><b>Paper Lab.</b> Runs a repeatable benchmark (scenarios × controllers × paired seeds), computes mean ± SD, paired differences with 95% confidence intervals, effect sizes and Holm-adjusted p-values, a sensitivity analysis for the burden weight, and writes a paper draft from the numbers. The in-app run is small by default; <code>bench/bench.js</code> runs the same code faster for the full study. <b>Seed repeatability:</b> v15 fixed a bug in which bus-stop queues were shared between simulations, so the same seed and settings now always give identical results, even when two simulations run side by side.</p>
+<p><b>Honest limits.</b> Still no language model and no real-city validation. The expected effects and burdens of each option, and the weight of burden in total cost (0.4), are my own judgements, not estimates from data; the benchmark varies only the burden weight. The agent and the scenarios were designed by the same author, and the agent was adjusted using a pilot on other seeds (101 to 103) before the final run on seeds 201 onward. A generated paper is a draft: it cannot make the study valid, and every claim and reference must be checked by a person.</p>
+</section>
+<section class="rs"><h3>19. v16: a team of agents, strict consent, a forecaster, and red-team testing</h3>
+<p><b>Strict consent.</b> Nothing in the city changes unless you press Approve. The "autonomous" mode and the "act at once in an emergency" switch of v15 were removed from the app; they exist only inside headless experiment copies, to measure what consent costs. Big decisions, standing rules (rules the city then applies by itself, such as automatic kiln inspections), hard-to-undo steps and anything the safety reviewer flags need a second, deliberate click on Confirm (a double click never confirms). Lifting a measure is also a proposal you decide on; any measure can be undone, and an undo never overwrites a value you changed since. Deny keeps an option away for the days you chose; it returns earlier only as a new question if its area becomes an emergency (at most every 6 hours). "Never" keeps it away completely until you allow it. Your deny and never lists survive a restart of the simulation.</p>
+<p><b>The team.</b> Four specialist officers (health, air quality, traffic, utilities) watch their areas every minute, explain causes and rank options. A coordinator merges their plans. A safety reviewer annotates every option: combined burden on people, overriding something you set yourself in the last day, earlier denials of similar measures, invalid sensor readings, re-raised denials, standing rules and forecasts. A forecaster copies the current city exactly (people, cars, air, grid and the random-number state) once per option plus once for "do nothing", runs the copies forward 3 to 24 hours with the same random future, and reports what each option did; if none beat doing nothing it says "consider waiting". An auditor writes every decision to a ledger and checks every simulated hour that each change to the city has a recorded reason.</p>
+<p><b>Red-team testing.</b> I wrote attacks against the agent core (Node.js) and against the web page (a real browser via Playwright), ran them, fixed what failed, then wrote new attacks against the fixes. The v15 agent resisted 8 of 25 core attacks and 4 of 13 browser attacks: it acted without a click by default, could apply a different option than the one clicked if the list changed, could be blinded for the rest of a run by one invalid sensor value, read "do not close schools" as "close schools", froze on a 3 MB CSV, and a double click could land on the next proposal. Later rounds found that the world-copy routine failed on the page's event listeners (the agent paused itself safely, as designed), that safety switches could be flipped from the browser console, and that a proposal blocked by your role vanished. All of these are fixed and re-tested; the final suite and its results are in <code>bench/</code>. Passing these tests shows that these attacks fail, not that no other attack exists.</p>
+<p><b>A/B test and benchmark.</b> The same harness ran the v15 and v16 agents on the same seeds with the same simulated person, and the benchmark compares the consent-based team with doing nothing, a fixed pack, the built-in autopilot, the agent acting alone, a reviewer who follows the forecaster and a reviewer who denies half. The numbers are in the generated paper.</p>
+<p><b>Honest limits.</b> All reviewers in the experiments are scripts, not people; a real user study is still needed. The forecaster shows one possible future of the model, not a probability, and it inherits every error of the model. The page runs in your own browser, so someone who controls that browser can still change its code; the protections are against mistakes, stale clicks and bad data, not against the owner of the computer.</p>
+</section>
+<section class="rs"><h3>20. v17: economy, government, birth centre, out-of-the-box measures and exit rules</h3>
+<p><b>What was added.</b> A treasury with revenue, eight departments, a reserve, loans, a province grant and public trust; prices for food, fuel, medicine and bus fares; households with savings; a birth centre with delivery rooms, midwives and incubators; and new measures such as air purifiers, building filters, cloud seeding, mist guns, odd-even driving, free buses, cash relief and food subsidies. Every option shows a price, the parts of a package, and an exit rule. A measure whose exit you agreed to eases in steps and lifts itself when the problem is gone and is not rising; without that agreement it only asks.</p>
+<p><b>Tests actually run.</b> 34 of 34 unit tests, 15 of 15 new red-team attacks (overdrawing the treasury, forged exit consent, flapping, extreme settings, hand-edited price tags), 41 of 41 older attacks. In the unit tests the books balance (gap 0.00%), the preview equals the charge, the same seed gives the same books, closing the market raised the food price from 1.004 to 1.452, and purifiers cut mean indoor exposure from 0.693 to 0.488. Passing tests show only that these attacks fail.</p>
+<p><b>A/B test.</b> 4 scenarios, 10 seeds, 7 days, the same seeds for every arm (n = 40 pairs). Against doing nothing, the consent-based agent (all measures, arm C) lowered deaths by 0.65 per run (95% CI -1.02 to -0.28), peak infection by 2.6 points and the combined loss J by 0.084. Using only the new out-of-the-box measures (arm B) did about as well (C minus B on J: 0.000, p = 0.96). Agreeing to automatic exit (arm D) caused 19 self-lifts per run, but did not measurably reduce lingering restrictions compared with C (-0.15 hours, p = 0.69) and the combined loss J did not change. So the benefit of self-lifting is not shown here; its value is fewer questions, not better outcomes.</p>
+<p><b>Honest limits.</b> The money figures are illustrative assumptions, not a real budget. Births and deaths use a time-lapse. The reviewers are scripts, not people. The tax levy brings in little. Some lingering restrictions and flapping (about 5 per run) remain. The numbers apply to this model only.</p>
+</section>
+</section>
+
+<!-- ======================= HOW IT WORKS ======================= -->
+<section id="tab-how" role="tabpanel" aria-labelledby="tabbtn-how" hidden>
+  <article class="article">
+    <div class="article-hero">
+      <div class="eyebrow">How the model works</div>
+      <h1>A living city of 500 people. Nobody programmed what happens.</h1>
+      <p class="lede">Every person in Outbreak Lab lives with their family, goes to school or work, the gym, the bazaar, the NADRA office, Friday prayers and weddings. They walk on footpaths or drive through traffic lights, breathe the smoke from brick kilns and fly abroad from the airport. Rain, fog and smog come and go, and accidents happen. The epidemic curve, the smog, the traffic jams, the motorway pile-ups and the full hospital all <em>emerge</em> from people living their daily lives.</p>
+    </div>
+
+    <section>
+      <h2>What is agent-based modelling?</h2>
+      <p>An agent-based model (ABM) simulates a system from the bottom up. Instead of one equation for the whole population, we create many individual <b>agents</b>. Each agent has its own properties, follows its own rules and interacts with the agents and places near it. We then run time forward and watch what the whole system does.</p>
+      <p>The classic SEIR equation model treats the population as four big buckets in which everyone meets everyone equally. An ABM can include what the equations leave out: families, schools and workplaces, daily routines, traffic, weather, air pollution, lifestyle, a hospital with a limited number of beds, and plain chance.</p>
+      <div class="ingredients">
+        <div class="card ingredient"><b>Agents</b><p>500 people in about 150 families. Each has an age, a home, a job, a daily plan, a health state, a lifestyle, a stress level, the air they have breathed and a memory of who infected them.</p></div>
+        <div class="card ingredient"><b>Environment</b><p>A 1 × 0.6 km city of 60 blocks, plus an airport, the M-2 motorway, brick kilns, farmland, weather and an air pollution map.</p></div>
+        <div class="card ingredient"><b>Rules</b><p>Routines, walking and driving, traffic lights, accidents, contacts in shared places, illness, ambulances, a helicopter, flights, smoke and wind.</p></div>
+        <div class="card ingredient"><b>Time</b><p>A scheduler runs every rule once per tick. 1 tick = 1 minute, so 1,440 ticks make a day. Each run starts on Monday at 06:00.</p></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>The world</h2>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Place</th><th>How many</th><th>Who goes there</th></tr></thead>
+          <tbody>
+            <tr><td>Houses and apartments</td><td class="m">192 homes</td><td>Every family. Houses have yards, driveways, water tanks and solar panels; apartment blocks have eight flats and a car park.</td></tr>
+            <tr><td>Schools, university</td><td class="m">2, 1</td><td>Pupils on weekdays 07:00–14:00, students, teachers and staff.</td></tr>
+            <tr><td>Office towers, factories</td><td class="m">3, 2</td><td>Adults who work there. Factory chimneys smoke 07:00–19:00, Monday to Saturday.</td></tr>
+            <tr><td>Bazaar, parks</td><td class="m">1, 5</td><td>Shoppers after work and at weekends; children, families and elders in the parks.</td></tr>
+            <tr><td>PowerHouse Gym</td><td class="m">1</td><td>Gym-goers before or after work. You can see them on treadmills, bikes, benches and mats.</td></tr>
+            <tr><td>NADRA office, passport office</td><td class="m">1, 1</td><td>Adults who take a day off to queue for an ID card or a passport, and the clerks.</td></tr>
+            <tr><td>Jamia Masjid</td><td class="m">1</td><td>Friday prayers around 13:00. People stand in rows facing west.</td></tr>
+            <tr><td>Shadi Hall</td><td class="m">1</td><td>Evening weddings on Fridays, Saturdays and Sundays, with string lights and round tables.</td></tr>
+            <tr><td>City Hospital</td><td class="m">8 beds</td><td>3 ambulances and an air ambulance (helicopter) on the roof helipad. Sick people, accident victims and motorway casualties all need the same beds.</td></tr>
+            <tr><td>Isolation centre, police, petrol station</td><td class="m">1, 1, 1</td><td>Detected cases (with Test &amp; isolate), and the people who work there.</td></tr>
+            <tr><td>Highways</td><td class="m">2</td><td>Four-lane roads with 13 traffic-light junctions and traffic police. The east–west highway continues as the Airport Road.</td></tr>
+            <tr><td>Airport</td><td class="m">4 gates</td><td>A runway, taxiways, a terminal with jet bridges, a control tower and hangars. Airport staff work here; travellers fly away and come back.</td></tr>
+            <tr><td>M-2 motorway</td><td class="m">6 lanes</td><td>Through traffic: cars, buses and trucks. Link roads and a toll plaza connect it to the city and the airport.</td></tr>
+            <tr><td>Brick kilns</td><td class="m">up to 8</td><td>Burn day and night in the farmland around the city. Their smoke is carried over the city by the wind.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The city buses and police patrol cars are decoration. Every other car is driven by an agent, every yellow taxi carries a traveller, every ambulance and helicopter carries a real patient, and every motorway vehicle follows the car-following rules described below.</p>
+    </section>
+
+    <section>
+      <h2>A day in the life</h2>
+      <p>At midnight every agent makes a plan for the next day. Plans depend on age, job, lifestyle, the day of the week, the weather forecast and the rules in force.</p>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Who</th><th>Weekday (Mon–Fri)</th><th>Weekend and extras</th></tr></thead>
+          <tbody>
+            <tr><td>Children</td><td>School 07:00–14:00; about 30% play in a park afterwards.</td><td>About 45% go to a park at weekends. Some go to Friday prayers when there is no school.</td></tr>
+            <tr><td>Adults with a job</td><td>Work 07:10–17:30. Gym-goers work out before work (05:40) or after work. On Fridays about 45% go to the masjid at 13:00 and back to work.</td><td>Bazaar trips and walks in the park. A few each day take the day off to queue at NADRA or the passport office.</td></tr>
+            <tr><td>Elders</td><td>Morning walk in the park, shopping, Friday prayers (55%).</td><td>Same.</td></tr>
+            <tr><td>Families</td><td colspan="2">About 15% of families are invited to each wedding (Fri–Sun, 19:30–23:00). Some residents take a taxi to the airport, fly abroad for 3–9 days and come back on a later flight.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Adults whose family owns a car drive trips longer than about 260 m (120 m when it rains); everyone else walks along the footpaths and crosses at junctions. Cars drive on the left. On rainy days far fewer people visit parks, and walkers carry umbrellas. People with symptoms stay at home on half of their days. Smokers at work step outside for a smoke break about every two hours, so smokers meet each other at the door.</p>
+    </section>
+
+    <section>
+      <h2>The life cycle of an agent</h2>
+      <p>Every agent is in exactly one health state. Some infectious people become seriously ill and need a hospital bed. Road accidents can injure or kill anyone, and road deaths are counted separately from deaths caused by the disease.</p>
+      <div class="diagram">
+        <svg viewBox="0 0 820 330" role="img" aria-label="State diagram: Susceptible to Exposed to Infectious, then Recovered or Deceased. Seriously ill infectious people are taken by ambulance to a hospital bed, or wait at home if the hospital is full. Detected cases go to the isolation centre. Recovered people can become susceptible again.">
+          <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="dg-head"/></marker></defs>
+          <path class="dg-arrow" d="M720 40 C 720 4, 80 4, 80 108" marker-end="url(#ah)" stroke-dasharray="5 4"/>
+          <text class="dg-label" x="400" y="44" text-anchor="middle">immunity wears off (optional setting)</text>
+          <rect class="dg-box" x="20" y="110" width="120" height="66" rx="10" style="stroke:var(--s)"/>
+          <text class="dg-letter" x="40" y="148" style="fill:var(--s)">S</text><text class="dg-name" x="66" y="146">Susceptible</text><text class="dg-label" x="66" y="162">can catch it</text>
+          <rect class="dg-box" x="230" y="110" width="120" height="66" rx="10" style="stroke:var(--e)"/>
+          <text class="dg-letter" x="250" y="148" style="fill:var(--e)">E</text><text class="dg-name" x="276" y="146">Exposed</text><text class="dg-label" x="276" y="162">incubating</text>
+          <rect class="dg-box" x="440" y="110" width="120" height="66" rx="10" style="stroke:var(--i)"/>
+          <text class="dg-letter" x="460" y="148" style="fill:var(--i)">I</text><text class="dg-name" x="484" y="146">Infectious</text><text class="dg-label" x="484" y="162">spreads it</text>
+          <rect class="dg-box" x="664" y="40" width="136" height="66" rx="10" style="stroke:var(--r)"/>
+          <text class="dg-letter" x="684" y="78" style="fill:var(--r)">R</text><text class="dg-name" x="708" y="76">Recovered</text><text class="dg-label" x="708" y="92">immune</text>
+          <rect class="dg-box" x="664" y="186" width="136" height="66" rx="10" style="stroke:var(--d)"/>
+          <text class="dg-letter" x="684" y="224" style="fill:var(--d)">D</text><text class="dg-name" x="708" y="222">Deceased</text><text class="dg-label" x="708" y="238">seriously ill only</text>
+          <rect class="dg-ward" x="400" y="250" width="200" height="66" rx="8"/>
+          <text class="dg-name" x="500" y="274" text-anchor="middle">Seriously ill → ambulance → bed</text>
+          <text class="dg-label" x="500" y="292" text-anchor="middle">no free bed: waits at home,</text>
+          <text class="dg-label" x="500" y="306" text-anchor="middle">death risk rises up to × 2.5</text>
+          <rect class="dg-ward" x="200" y="250" width="160" height="50" rx="8"/>
+          <text class="dg-name" x="280" y="272" text-anchor="middle">Isolation centre</text>
+          <text class="dg-label" x="280" y="288" text-anchor="middle">detected cases, no contacts</text>
+          <path class="dg-arrow" d="M142 143 H226" marker-end="url(#ah)"/><text class="dg-label" x="184" y="134" text-anchor="middle">contact</text>
+          <text class="dg-label" x="184" y="194" text-anchor="middle">stress, smoking</text><text class="dg-label" x="184" y="208" text-anchor="middle">raise the chance</text>
+          <path class="dg-arrow" d="M352 143 H436" marker-end="url(#ah)"/><text class="dg-label" x="394" y="134" text-anchor="middle">~3 days</text>
+          <path class="dg-arrow" d="M562 128 L660 82" marker-end="url(#ah)"/><text class="dg-label" x="596" y="92" text-anchor="middle">recovers</text>
+          <path class="dg-arrow" d="M562 160 L660 210" marker-end="url(#ah)"/><text class="dg-label" x="626" y="174">dies</text>
+          <path class="dg-arrow" d="M510 178 V246" marker-end="url(#ah)"/><text class="dg-label" x="518" y="214">1–60%</text>
+          <path class="dg-arrow" d="M470 178 L300 246" marker-end="url(#ah)"/><text class="dg-label" x="358" y="214">detected</text>
+        </svg>
+      </div>
+    </section>
+
+    <section>
+      <h2>Real-world factors</h2>
+      <p>Every factor below is part of the model, not just the picture. Each one has settings in the Parameters panel, and the City row under the map shows what it is doing right now.</p>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Factor</th><th>How it works</th><th>What it changes</th></tr></thead>
+          <tbody>
+            <tr><td>Weather</td><td>With real weather, each day has a 20% chance of a 2–8 hour rain spell and a 25% chance of morning fog (from the early hours until about 10:00). You can also fix the weather to clear, rain, fog or smog. Thunderstorms bring lightning.</td><td>Rain: fewer park visits, more driving, slippery roads, smoke washed out of the air. Fog: drivers slow down but crash more, visibility drops to 25–400 m, smoke is trapped, and the helicopter cannot fly.</td></tr>
+            <tr><td>Air pollution</td><td>A map of 20 m cells. Every 10 minutes the kilns, factory chimneys and every car, bus and truck add smoke. The wind carries it, it mixes with neighbouring cells, and it slowly clears (less in fog and smog, much more in rain).</td><td>The air quality index (AQI) over the city. Each person keeps a 3-day average of the air they breathed; indoor air is 35% cleaner.</td></tr>
+            <tr><td>Lifestyle</td><td>Some adults smoke and some go to the gym (both settings). Smokers take smoke breaks outside their workplace.</td><td>Smokers are 1.8 × as likely to become seriously ill and 1.2 × as likely to catch the disease. Gym-goers are 0.6 × as likely to become seriously ill, but the gym is crowded.</td></tr>
+            <tr><td>Stress</td><td>Each hour, stress moves towards a level set by where the person is: home in the evening 18%, park 8%, gym 4%, prayers and weddings 12%, office 52%, factory, police or hospital work 66%, NADRA queue 78%, driving 55% plus time stuck at red lights, injured 95%. Lockdown, a full hospital and smog add stress; a death or injury in the family adds a jump.</td><td>Stress weakens immunity: up to +40% chance of catching the disease (setting). Stressed drivers crash and run red lights more often.</td></tr>
+            <tr><td>Traffic lights</td><td>13 junctions on the highways. Each light cycles every 30 minutes of model time: 12 green, 3 amber per direction. Cars queue 7 m apart at red. About 2.5% of drivers run a red light, more when stressed or in fog.</td><td>Safer junctions, but queues and stress.</td></tr>
+            <tr><td>Traffic police</td><td>Officers stand under an umbrella at the busiest junctions from 07:00 to 21:00.</td><td>Red-light running drops by 92% and crashes by 60% at their junctions.</td></tr>
+            <tr><td>Road accidents</td><td>Two cars from crossing roads in the same junction may collide; a single car may skid; a person crossing the road may be hit by a nearby car. Risk rises with speed (squared), rain, fog, darkness and stress.</td><td>Injured people wait on the road for an ambulance (they go before sick people), then need a hospital bed for 2–12 days. Seat belts halve injuries and deaths. With no free bed they are sent to another city.</td></tr>
+            <tr><td>Motorway</td><td>Each vehicle keeps a distance it can stop in, but a driver can only see as far as the visibility and needs a moment to react. In thick fog drivers cannot stop in time for a crash ahead, so more vehicles pile into it, until hazard warnings slow the traffic behind.</td><td>The motorway police close the motorway in thick fog (setting). Casualties come to the city hospital by helicopter, or by ambulance when it cannot fly.</td></tr>
+            <tr><td>Airport</td><td>Flights land from the west over the city and take off to the east. Residents take a taxi to the airport, fly abroad for 3–9 days and come back on a later flight.</td><td>A share of returning travellers bring the infection home (imported cases). A travel ban stops flights; people abroad come home by road.</td></tr>
+            <tr><td>Gatherings</td><td>Friday prayers around 13:00 with people standing close in rows; weddings in the evening with families at round tables.</td><td>Many contacts in a short time: possible super-spreading events.</td></tr>
+            <tr><td>Government offices</td><td>Each weekday a few adults queue at NADRA or the passport office for 70–150 minutes.</td><td>Crowded waiting halls (risk 1.3) mix people from all over the city; queues are stressful.</td></tr>
+            <tr><td>Daylight</td><td>With Auto light, sunrise is 05:00–07:00 and sunset 18:00–20:00, with golden light, lit windows, street lamps, headlights and glowing kilns at night.</td><td>Accident risk is 1.6 × higher in the dark.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>The agents</h2>
+      <p>Every person is an object of the <code>Agent</code> class. Click any person or car in the simulation to see these values live in the Agent inspector.</p>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Group</th><th>Attributes</th><th>Why it matters</th></tr></thead>
+          <tbody>
+            <tr><td>Identity</td><td><code>id</code>, <code>age</code> (child, adult, elder), <code>job</code></td><td>Age changes symptoms, serious illness and death. The job decides where the person spends the day.</td></tr>
+            <tr><td>Social</td><td><code>household</code>, <code>home</code>, <code>school</code>, <code>work</code></td><td>Families share a home; schools, workplaces and gatherings connect families.</td></tr>
+            <tr><td>Routine</td><td><code>plan</code>, <code>activity</code>, <code>place</code>, <code>mode</code> (inside, walk, drive, injured, away), <code>path</code></td><td>Where a person is decides who they can meet.</td></tr>
+            <tr><td>Behaviour</td><td><code>distancing</code>, <code>mask</code>, <code>vaccinated</code>, <code>smoker</code>, <code>gymGoer</code></td><td>Set from the sliders.</td></tr>
+            <tr><td>Body and mind</td><td><code>stress</code>, <code>exposure</code> (air breathed), <code>susc</code> (how easily they catch it)</td><td>Change who catches the disease and who becomes seriously ill.</td></tr>
+            <tr><td>Roads and travel</td><td><code>queueKey</code> (waiting at a red light), <code>injured</code>, <code>accidents</code>, <code>trip</code>, <code>away</code></td><td>Traffic jams, injuries, hospital beds and imported cases.</td></tr>
+            <tr><td>Health</td><td><code>state</code>, <code>symptomatic</code>, <code>severe</code>, <code>hospitalized</code>, <code>isolated</code></td><td>Drives the life cycle above.</td></tr>
+            <tr><td>Memory</td><td><code>infectedBy</code>, <code>infectedWhere</code>, <code>infectedIds</code>, <code>generation</code></td><td>Lets us trace infection chains and measure R₀, super-spreaders and where infections happen.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>What happens in every tick</h2>
+      <p>The <code>World.step()</code> method runs these rules once per simulated minute:</p>
+      <ol>
+        <li><b>New day</b> (at midnight): weather for the day, flights, weddings, travellers leaving and coming home, and every agent's plan.</li>
+        <li><b>Environment</b>: rain and fog levels, darkness, driving speed, traffic lights.</li>
+        <li><b>Act</b>: agents walk or drive to their next activity; cars stop at red lights. Inside a place, agents move around or use a machine, a chair or a prayer row.</li>
+        <li><b>Roads</b>: collisions at junctions, skids, people hit while crossing, the motorway with its car-following, crashes and pile-ups.</li>
+        <li><b>Rescue</b>: ambulances and the helicopter collect injured and seriously ill people.</li>
+        <li><b>Airport</b>: flights land and leave; travellers come home, some with the infection.</li>
+        <li><b>Contacts</b> (every 5 minutes): every infectious person may infect susceptible people <em>in the same place</em> within the contact distance. You can only catch it at home from your own family. People in cars, abroad or in isolation infect nobody.</li>
+        <li><b>Health</b>: incubation and illness timers; recovery or death; detection and isolation.</li>
+        <li><b>Air</b> (every 10 minutes): smoke, wind and mixing; injuries heal; travellers return.</li>
+        <li><b>Hourly</b>: wind changes, stress and air exposure update, statistics and the event feed.</li>
+      </ol>
+      <h3>The infection rule</h3>
+      <div class="formula">P(infect per minute of contact) = β/60 × place risk × (0.5 if the sick person wears a mask) × (0.7 if the healthy person wears a mask) × (1 + stress effect × stress) × (1.2 if a smoker)</div>
+      <p>β is the transmission chance per hour of close contact (default 5%). Masks only count outside homes. A vaccinated person is fully protected with a chance equal to the vaccine efficacy.</p>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Place</th><th>Risk</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>Home</td><td class="m">0.22</td><td>Everyone at home counts as a contact, for many hours a day.</td></tr>
+            <tr><td>School, university, airport</td><td class="m">1.0</td><td>Crowded rooms and halls.</td></tr>
+            <tr><td>Office, police, factory</td><td class="m">0.8–0.9</td><td>Indoor work.</td></tr>
+            <tr><td>Gym</td><td class="m">1.2</td><td>Indoors and breathing hard, machines close together.</td></tr>
+            <tr><td>Bazaar, NADRA, passport office</td><td class="m">1.3</td><td>Crowded, with strangers from all over the city.</td></tr>
+            <tr><td>Masjid, Shadi Hall</td><td class="m">1.1, 1.4</td><td>Many people close together for an hour or more.</td></tr>
+            <tr><td>Hospital</td><td class="m">0.6</td><td>Staff use protection; patients in bed spread a quarter of that.</td></tr>
+            <tr><td>Park, street</td><td class="m">0.6, 0.3</td><td>Outdoors and spread out.</td></tr>
+            <tr><td>Car, abroad, isolation centre</td><td class="m">0</td><td>No contact with others in the city.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>Serious illness and death</h3>
+      <p>Seriously ill people fall ill 1.5 to 3.5 days into their illness and stay ill 3 to 6 days longer. Only seriously ill people can die of the disease.</p>
+      <div class="formula">P(serious) = age (child 1%, adult 7%, elder 30% of those with symptoms) × 1.8 if a smoker × 0.6 if a gym-goer × (1 + harm from bad air × air breathed) × 0.3 if vaccinated</div>
+      <div class="formula">P(death) = death risk (35%) × age factor (child 0.5, adult 0.8, elder 1.4) × (1 + 1.5 × share of 1.5 days spent waiting without a bed) × 0.5 if vaccinated</div>
+      <p>“Air breathed” is 1.0 for someone who has breathed PM2.5 of 150 µg/m³ for days. When all hospital beds are taken by sick and injured people, new patients have to wait at home; after 1.5 days without care their risk of dying is 2.5 times higher.</p>
+      <h3>Road accidents</h3>
+      <div class="formula">risk = driving danger × (speed limit / 50)² × (1 + 1.4 rain + 2.6 fog) × 1.6 at night</div>
+      <p>Per minute: two cars from crossing roads in the same junction collide with chance 0.8% × risk (× 0.4 with a traffic officer); any car crashes alone with chance 0.0011% × risk × (1 + stress); a person crossing within 7 m of a car is hit with chance 0.05% × risk. A driver is injured with chance 35% × speed/50 and killed with chance 3% × (speed/50)²; a seat belt roughly halves both. A person on foot is injured with chance 70% and killed with chance 9% × (speed/50)².</p>
+      <h3>Air quality</h3>
+      <div class="formula">new smoke = old smoke moved by the wind + mixing with neighbours + kilns + chimneys + exhaust − cleaning (2–5% every 10 minutes; ×0.15 in fog, ×0.3 in smog, +12% in rain)</div>
+      <p>The air quality index (AQI) uses the US EPA scale for PM2.5: 0–50 good, 51–100 moderate, 101–150 unhealthy for sensitive groups, 151–200 unhealthy, 201–300 very unhealthy, above 300 hazardous.</p>
+    </section>
+
+    <section>
+      <h2>Parameters you can change</h2>
+      <p>Settings marked <span class="reset-tag">on reset</span> take effect when you press Reset. All others change the running simulation; rules about places apply from the next day's plans, and flights from the next day.</p>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Parameter</th><th>Default</th><th>Range</th><th>Meaning</th></tr></thead>
+          <tbody id="paramTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>What you can measure</h2>
+      <div class="two-col">
+        <div>
+          <h3>R₀, Rₜ and herd immunity</h3>
+          <p>R₀ is the average number of people infected by each of the first 30 cases (about 3 here). Rₜ is the same for cases that ended in the last 7 days. The herd immunity threshold is 1 − 1/R₀.</p>
+          <h3>Peak, ever infected and deaths</h3>
+          <p>The most people infectious at once, the share who caught it, deaths from the disease and road deaths, kept apart.</p>
+          <h3>Hospital</h3>
+          <p>Beds in use (sick, injured and motorway casualties), people waiting and a chart of patients against beds.</p>
+        </div>
+        <div>
+          <h3>Weather and air</h3>
+          <p>Weather, wind, visibility, the AQI with its history, PM2.5 and the air pollution map layer.</p>
+          <h3>Roads and safety</h3>
+          <p>Accidents per day, injuries, road deaths, red lights run, cars waiting, motorway crashes and helicopter flights.</p>
+          <h3>People and travel</h3>
+          <p>City stress, where everyone is right now, flights, travellers abroad and imported cases. All of it is in the CSV export.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Emergent behaviour to look for</h2>
+      <ul>
+        <li><b>The daily rhythm.</b> Streets fill at 07:00 and 17:00, queues form at red lights, schools empty at weekends and everyone is home at night.</li>
+        <li><b>Homes amplify, schools and workplaces connect.</b> Most infections happen inside homes, but schools, offices, the bazaar and gatherings carry the disease between families.</li>
+        <li><b>Smog builds up.</b> On calm, foggy days the kiln smoke cannot escape and the AQI climbs past 200; rain washes it away within hours.</li>
+        <li><b>Foggy mornings are dangerous.</b> Accidents cluster in morning fog; if the motorway stays open, one crash becomes a pile-up.</li>
+        <li><b>The hospital is shared.</b> Accident victims and motorway casualties take beds that seriously ill patients need.</li>
+        <li><b>Super-spreading events.</b> A Friday prayer or a wedding with one infectious guest can start many new chains at once.</li>
+        <li><b>Imported cases.</b> Travellers can restart an outbreak that was dying out.</li>
+        <li><b>Chance matters.</b> Change only the random seed and the same settings give a different story.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Code structure</h2>
+      <p>Plain JavaScript with object-oriented classes and no libraries. The model has no knowledge of the screen, so the same code also runs in Node.js.</p>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Class</th><th>Job</th></tr></thead>
+          <tbody>
+            <tr><td><code>Random</code>, <code>SpatialGrid</code></td><td>Seeded random numbers (every run can be repeated) and 20 m cells for fast neighbour search.</td></tr>
+            <tr><td><code>Agent</code></td><td>One person: <code>planDay()</code>, <code>act()</code>, <code>travelTo()</code>, <code>follow()</code>, <code>wander()</code>, <code>progress()</code>.</td></tr>
+            <tr><td><code>Ambulance</code>, <code>Helicopter</code></td><td>Collect seriously ill and injured people and motorway casualties.</td></tr>
+            <tr><td><code>Vehicle</code></td><td>Motorway through traffic with car-following, lane changes and visibility.</td></tr>
+            <tr><td><code>World</code></td><td>Builds the city, families and jobs; runs <code>step()</code>: weather, air pollution, traffic lights, accidents, rescue, flights, infection, the hospital, statistics and events.</td></tr>
+            <tr><td><code>Decor</code>, <code>paintCity</code>, <code>paintOutskirts</code></td><td>Draw roads, buildings, the airport, the motorway, kilns and farmland in night or day colours.</td></tr>
+            <tr><td><code>Renderer</code>, <code>Camera</code></td><td>Draw people, cars, aircraft, the helicopter and effects 60 times a second; zoom, pan, minimap and Track.</td></tr>
+            <tr><td><code>Sky</code>, <code>Smoke</code>, <code>AirLayer</code></td><td>Rain, lightning, fog, smog haze, cloud shadows, golden hour, kiln and cigarette smoke, the air pollution map.</td></tr>
+            <tr><td><code>Effects</code>, <code>Heatmap</code>, <code>SoundFX</code></td><td>Infection and crash bursts, the hotspot map, and sound made with the Web Audio API.</td></tr>
+            <tr><td><code>App</code></td><td>Connects buttons, sliders, charts, the inspector and the animation loop.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <pre class="code"><span class="c">// one tick = one minute</span>
+<span class="k">step</span>() {
+  <span class="k">if</span> (minute === 0) newDay();                   <span class="c">// weather, flights, weddings, plans</span>
+  updateEnvironment();                            <span class="c">// rain, fog, darkness, traffic lights</span>
+  <span class="k">for</span> (const a of agents) a.act();               <span class="c">// walk, drive, stop at red, stay</span>
+  roadSafety(); updateMotorway();                 <span class="c">// accidents and pile-ups</span>
+  updateAmbulances(); updateHeli(); updateFlights();
+  <span class="k">if</span> (tick % 5 === 0) contacts();              <span class="c">// same place, close by</span>
+  <span class="k">for</span> (const a of agents) a.progress();          <span class="c">// health</span>
+  <span class="k">if</span> (tick % 10 === 0) updatePollution();       <span class="c">// smoke, wind, rain</span>
+  <span class="k">if</span> (tick % 60 === 0) hourly();               <span class="c">// stress, exposure, statistics</span>
+}</pre>
+    </section>
+
+    <section>
+      <h2>Assumptions and limits</h2>
+      <p>This is a teaching model of a generic airborne disease in a stylised Pakistani city, not a forecast. People and vehicles move more slowly than in real life so you can watch them; traffic-light cycles, wind and flight times are scaled to match. Accident rates, pollution levels and health effects are chosen to make patterns visible, not calibrated to real data. Real ABMs are validated against real data before they guide decisions.</p>
+    </section>
+
+    <section>
+      <h2>Agent-based modelling in the real world</h2>
+      <ul>
+        <li><b>Public health.</b> Individual-based simulations such as Imperial College London’s CovidSim informed COVID-19 policy in 2020.</li>
+        <li><b>Traffic and transport.</b> MATSim and SUMO simulate every traveller and vehicle to plan roads, traffic lights and public transport.</li>
+        <li><b>Air quality.</b> Exposure models combine pollution maps with people's daily movements, which is how studies estimate the health cost of smog.</li>
+        <li><b>Crowd safety.</b> Evacuation models test how people leave stadiums, stations and large gatherings.</li>
+        <li><b>Economics and ecology.</b> Market models with many traders; predator–prey and fishery models.</li>
+      </ul>
+      <p>Popular tools for building ABMs include NetLogo, Mesa (Python), Repast, GAMA and AnyLogic.</p>
+    </section>
+  </article>
+</section>
+
+<!-- ======================= CLASS GUIDE ======================= -->
+<section id="tab-guide" role="tabpanel" aria-labelledby="tabbtn-guide" hidden>
+  <article class="article">
+    <div class="article-hero">
+      <div class="eyebrow">Class guide · about 20 minutes</div>
+      <h1>How to present this model in class</h1>
+      <p class="lede">A step-by-step demo script. Each step says what to click and what to point out to the class.</p>
+    </div>
+    <section>
+      <div class="callout"><b>Before class:</b> open the Simulation tab and press <span class="kbd">R</span> to reset. Press <b>Full screen</b> or F11. Use the light button to pick <b>Night</b>, <b>Day</b> or <b>Auto light</b> (follows the clock), and turn <b>Sound</b> on or off.</div>
+      <ol class="steps">
+        <li><div><h3>Tour the world</h3>
+          <p class="do"><b>Do</b>Stay paused at Monday 06:00. Zoom in with <b>+</b> or the mouse wheel and drag around.</p>
+          <p class="say"><b>Point out</b>Every person is an agent with a family and a job. Show the highways with traffic lights, the gym, the NADRA and passport offices, the masjid, the Shadi Hall, the hospital with its helipad, the airport, the M-2 motorway and the brick kilns smoking in the fields.</p></div></li>
+        <li><div><h3>Watch the morning rush</h3>
+          <p class="do"><b>Do</b>Choose <b>×1</b> (or <b>×¼</b> for slow motion) and <b>Auto light</b>, zoom into the junction in the middle of the city, and press Start.</p>
+          <p class="say"><b>Point out</b>The sun rises. Cars stop at red lights and queue; a traffic officer waves them through. Children walk to school, gym-goers come out of the gym, and a yellow taxi takes a traveller to the airport.</p></div></li>
+        <li><div><h3>Follow one person</h3>
+          <p class="do"><b>Do</b>Click a person, then <b>Follow on map</b>.</p>
+          <p class="say"><b>Point out</b>The inspector shows their family, job, today's plan, stress level, the air they have breathed and their own chance of serious illness. Smokers and gym-goers have different risks.</p></div></li>
+        <li><div><h3>Run the baseline</h3>
+          <p class="do"><b>Do</b>Pick <b>Baseline</b>, switch to <b>×15</b> and turn on <b>Hotspots</b>.</p>
+          <p class="say"><b>Point out</b>Red bursts are new infections. <b>Where infections happen</b> shows homes, schools, workplaces, the bazaar, the masjid and weddings. Watch the City row: weather, air quality, accidents and where everyone is.</p></div></li>
+        <li><div><h3>Weather and air</h3>
+          <p class="do"><b>Do</b>Turn on the <b>Air pollution</b> layer. Wait for a foggy morning or a rainy day (or pick them under Parameters → Weather).</p>
+          <p class="say"><b>Point out</b>The kiln smoke drifts over the city with the wind. In fog the smoke is trapped and the AQI rises; rain washes it out. People who breathe bad air for days are more likely to become seriously ill.</p></div></li>
+        <li><div><h3>Smog season</h3>
+          <p class="do"><b>Do</b>Run <b>Smog season</b>, then <b>Clean air</b>.</p>
+          <p class="say"><b>Point out</b>With 8 kilns in smog the AQI climbs towards 300 and above (hazardous), and more people need a hospital bed. Clean zig-zag kilns and less exhaust keep the air much cleaner.</p></div></li>
+        <li><div><h3>Fog on the motorway</h3>
+          <p class="do"><b>Do</b>Run <b>Foggy motorway</b> and zoom into the M-2.</p>
+          <p class="say"><b>Point out</b>Drivers can only see about 30 m. When one vehicle crashes, the cars behind cannot stop: a pile-up. The helicopter cannot fly in fog, so ambulances drive out, and the casualties fill the city hospital. Switch <b>Close motorway in fog</b> back on and the pile-ups stop.</p></div></li>
+        <li><div><h3>Road safety</h3>
+          <p class="do"><b>Do</b>Compare <b>Baseline</b> and <b>Road safety</b> in the Roads &amp; safety card.</p>
+          <p class="say"><b>Point out</b>Traffic police, seat belts and a 40 km/h limit cut injuries and deaths. Fewer injured people means more free beds for the sick.</p></div></li>
+        <li><div><h3>Gatherings</h3>
+          <p class="do"><b>Do</b>Fast-forward to Friday 13:00 and zoom into the masjid; on a wedding night zoom into the Shadi Hall. Then run <b>No gatherings</b>.</p>
+          <p class="say"><b>Point out</b>Dozens of people stand close together for an hour. One infectious person there can start many chains at once.</p></div></li>
+        <li><div><h3>Lifestyle</h3>
+          <p class="do"><b>Do</b>Run <b>Healthy lifestyle</b> (5% smokers, 45% gym-goers).</p>
+          <p class="say"><b>Point out</b>About the same number of people get infected. Smokers are more likely and gym-goers less likely to become seriously ill, but in a city of 500 the difference is small compared with chance: run it a few times and compare the hospital cards. Small effects need many runs to see.</p></div></li>
+        <li><div><h3>Travel</h3>
+          <p class="do"><b>Do</b>Watch a plane land over the city and a taxi bring a traveller home. Set <b>Travellers bringing it home</b> to 20%, then run <b>Travel ban</b>.</p>
+          <p class="say"><b>Point out</b>Imported cases can restart an outbreak. Closing the airport stops them, at a real cost to people and trade.</p></div></li>
+        <li><div><h3>Classic measures</h3>
+          <p class="do"><b>Do</b>Run <b>Close schools</b>, <b>Work from home</b>, <b>Bigger hospital</b>, <b>Vaccination</b> and <b>Lockdown</b>.</p>
+          <p class="say"><b>Point out</b>Each one lowers the peak in a different way. A bigger hospital does not stop the spread but saves lives. Lockdown is the strongest, and also the most stressful.</p></div></li>
+        <li><div><h3>Compare and conclude</h3>
+          <p class="do"><b>Do</b>Scroll to Experiments: every finished run is saved with its peak, deaths, road deaths and average AQI.</p>
+          <p class="say"><b>Point out</b>An ABM lets us test policies about health, traffic and air together, before trying them on real people.</p></div></li>
+        <li><div><h3>Money, government and out-of-the-box measures (v17)</h3>
+          <p class="do"><b>Do</b>Open the Agent tab in a smog crisis and read the proposals: each shows a <b>Price</b>, its parts and an <b>Exit rule</b>. Then open the Government tab.</p>
+          <p class="say"><b>Point out</b>Air purifiers, building filters, cloud seeding, free buses and odd-even are offered next to the classic measures, and each costs real (illustrative) money. If you tick "lift by itself when things improve", the measure eases in steps and ends without a new question. Nothing is ever changed without your approval. The prices are assumptions, not real budgets.</p></div></li>
+      </ol>
+    </section>
+    <section>
+      <h2>Questions for discussion</h2>
+      <ol>
+        <li>Why does smog increase deaths from the disease even though it does not spread the disease?</li>
+        <li>Road accidents and the epidemic seem unrelated. How are they connected in this model?</li>
+        <li>Why does keeping the motorway open in fog cause pile-ups instead of single crashes?</li>
+        <li>A healthy lifestyle hardly changes how many people get infected. What does it change, and why?</li>
+        <li>Why can one Friday prayer or one wedding matter more than a whole week of normal days?</li>
+        <li>What would you add next: public transport, heat waves, schools in shifts, or a vaccine campaign that starts during the outbreak?</li>
+      </ol>
+    </section>
+    <section>
+      <h2>Key words</h2>
+      <div class="two-col">
+        <p><b>Agent:</b> an independent individual with its own state and rules.</p>
+        <p><b>Environment:</b> the space where agents live and interact, including weather and air.</p>
+        <p><b>Emergence:</b> a pattern of the whole system that no single rule describes.</p>
+        <p><b>Stochastic:</b> includes randomness, so runs differ.</p>
+        <p><b>Tick:</b> one step of simulated time (here, one minute).</p>
+        <p><b>AQI:</b> the air quality index, from 0 (clean) to 500 (hazardous).</p>
+        <p><b>Imported case:</b> an infection caught outside the city and brought in.</p>
+        <p><b>Car-following:</b> each driver adjusts their speed to the vehicle ahead.</p>
+      </div>
+      <button class="btn jump" type="button" data-goto="sim">Open the simulation</button>
+    </section>
+  </article>
+</section>
+
+</main>
+<div class="toast" id="toast" hidden role="status"></div>
+
+<script src="js/model.js"></script>
+<script src="js/econ.js"></script>
+<script src="js/app.js"></script>
+<script src="js/mayor.js"></script>
+<script src="js/paper.js"></script>
+<script src="js/agent-ui.js"></script>
+<script src="js/gov-ui.js"></script>
+<script src="js/paperlab-ui.js"></script>
+</body>
+</html>
